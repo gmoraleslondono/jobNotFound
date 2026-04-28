@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Home } from "./pages/Home";
+import { Home } from "./Home";
 import "./App.css";
 
-function App() {
+export function App() {
   return (
     <Router>
       <h1>Job Not Found</h1>
@@ -12,5 +12,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;
