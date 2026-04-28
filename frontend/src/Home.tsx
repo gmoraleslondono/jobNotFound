@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
+import "./Home.css";
 
 export const Home = () => {
   const trpc = useTRPC();
@@ -7,22 +8,41 @@ export const Home = () => {
     trpc.getJobs.queryOptions(),
   );
 
-  console.log({ searchResults });
-
   const jobAds = searchResults?.hits || [];
+
+  const jobPublishedDate = (job: string) => {
+    const date = new Date(job);
+    return date.toISOString().split("T")[0];
+  };
 
   return (
     <div>
       {isLoading ? (
         <p>Loading jobs...</p>
       ) : (
-        <div>
+        <ul>
           {jobAds.map((job, index: number) => (
-            <div key={index}>
-              <h2>{job.headline}</h2>
-            </div>
+            <li className="job-card" key={index}>
+              <div>
+                <h2 className="job-headline">{job.headline}</h2>
+                <div>
+                  <p className="card-content">Company: {job.employer.name}</p>
+                  <p className="card-content">
+                    Type of contract: {job.duration.label} -{" "}
+                    {job.working_hours_type?.label}
+                  </p>
+                  <p className="card-content">
+                    Last application date:{" "}
+                    {jobPublishedDate(job.application_deadline)}
+                  </p>
+                </div>
+              </div>
+              <div className="options-container">
+                <button className="options-button">Options</button>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
