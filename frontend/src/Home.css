@@ -14,7 +14,7 @@
   margin-bottom: 10px;
 }
 
-/* .options-container {
+.options-container {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -72,4 +72,4 @@
   border-color: #0071e3;
   background: #e9f4ff;
   color: #024a95;
-} */
+}
