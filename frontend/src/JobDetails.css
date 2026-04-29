@@ -1,0 +1,34 @@
+.content {
+  color: white;
+}
+
+.headline {
+  color: white;
+}
+
+.info {
+  text-align: justify;
+  margin: 20px 0;
+  line-height: 1.6;
+}
+
+.description {
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: justify;
+}
+
+.actions {
+  width: 50%;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+
+  /* mobile */
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
+}

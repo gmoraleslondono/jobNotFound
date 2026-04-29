@@ -30,6 +30,22 @@ export const appRouter = router({
       throw new Error("An error occurred while fetching job listings.");
     }
   }),
+
+  // Add the input/id in the url and fetch the details for that specific job
+
+  getJobDetails: publicProcedure
+    .input(z.string())
+    .query(async ({ input: id }) => {
+      console.log("Fetching details for job ID:", id);
+      try {
+        const response = await axios.get(`${JOB_SEARCH_BASE_API}/ad/${id}`);
+        console.log("Job details API response:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+        throw new Error("An error occurred while fetching job details.");
+      }
+    }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import "./Home.css";
+import { Link } from "react-router-dom";
+import { formatDate } from "./dateUtils";
 
 export const Home = () => {
   const trpc = useTRPC();
@@ -29,13 +31,8 @@ export const Home = () => {
 
   const jobAds = searchResults?.hits || [];
 
-  const jobPublishedDate = (job: string) => {
-    const date = new Date(job);
-    return date.toISOString().split("T")[0];
-  };
-
   return (
-    <div>
+    <div className="home app-content">
       {isLoading ? (
         <p>Loading jobs...</p>
       ) : (
@@ -43,7 +40,11 @@ export const Home = () => {
           {jobAds.map((job, index: number) => (
             <li className="job-card" key={index}>
               <div>
-                <h2 className="job-headline">{job.headline}</h2>
+                <Link to={`/job/${job.id}`} className="job-link">
+                  <h2 className="job-headline job-headline-clickable">
+                    {job.headline}
+                  </h2>
+                </Link>
                 <div>
                   <p className="card-content">Company: {job.employer.name}</p>
                   <p className="card-content">
@@ -52,7 +53,7 @@ export const Home = () => {
                   </p>
                   <p className="card-content">
                     Last application date:{" "}
-                    {jobPublishedDate(job.application_deadline)}
+                    {formatDate(job.application_deadline)}
                   </p>
                 </div>
               </div>
@@ -74,7 +75,7 @@ export const Home = () => {
                 {activePopupIndex === index && (
                   <div className="options-popup">
                     <button
-                      className="popup-action"
+                      className="bt-action"
                       type="button"
                       onClick={() => {
                         console.log("Add to favorites", index);
@@ -84,10 +85,10 @@ export const Home = () => {
                       Add to favorites
                     </button>
                     <button
-                      className="popup-action popup-apply"
+                      className="bt-action bt-apply"
                       type="button"
                       onClick={() => {
-                        console.log("Apply now", index);
+                        window.open(job?.application_details?.url, "_blank");
                         setActivePopupIndex(null);
                       }}
                     >

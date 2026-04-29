@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./Home";
 import "./App.css";
+import JobDetails from "./JobDetails";
 
 export function App() {
   return (
@@ -8,6 +9,7 @@ export function App() {
       <h1>Job Not Found</h1>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/job/:id" element={<JobDetails />} />
       </Routes>
     </Router>
   );
