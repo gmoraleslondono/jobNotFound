@@ -1,5 +1,5 @@
 import z from "zod";
-import { searchResponseSchema } from "./schemas.ts";
+import { searchResponseSchema, jobAdSearchResultSchema } from "./schemas.ts";
 import { publicProcedure, router } from "./trpc.ts";
 import axios from "axios";
 
@@ -18,7 +18,6 @@ export const appRouter = router({
       const response = await axios.get(
         `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
       );
-      console.log("API response:", response.data);
       const searchResponse = searchResponseSchema.parse(response.data);
       return searchResponse;
     } catch (error) {
@@ -36,11 +35,13 @@ export const appRouter = router({
   getJobDetails: publicProcedure
     .input(z.string())
     .query(async ({ input: id }) => {
-      console.log("Fetching details for job ID:", id);
       try {
+        if (!id) {
+          throw new Error("Job ID is required to fetch job details.");
+        }
         const response = await axios.get(`${JOB_SEARCH_BASE_API}/ad/${id}`);
-        console.log("Job details API response:", response.data);
-        return response.data;
+        const jobAdSearchResult = jobAdSearchResultSchema.parse(response.data);
+        return jobAdSearchResult;
       } catch (error) {
         console.error("Error fetching job details:", error);
         throw new Error("An error occurred while fetching job details.");

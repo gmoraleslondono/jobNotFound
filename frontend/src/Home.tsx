@@ -46,14 +46,14 @@ export const Home = () => {
                   </h2>
                 </Link>
                 <div>
-                  <p className="card-content">Company: {job.employer.name}</p>
+                  <p className="card-content">Company: {job.employer?.name}</p>
                   <p className="card-content">
-                    Type of contract: {job.duration.label} -{" "}
+                    Type of contract: {job.duration?.label} -{" "}
                     {job.working_hours_type?.label}
                   </p>
                   <p className="card-content">
                     Last application date:{" "}
-                    {formatDate(job.application_deadline)}
+                    {formatDate(job.application_deadline || "")}
                   </p>
                 </div>
               </div>
@@ -88,7 +88,13 @@ export const Home = () => {
                       className="bt-action bt-apply"
                       type="button"
                       onClick={() => {
-                        window.open(job?.application_details?.url, "_blank");
+                        if (job?.application_details?.url) {
+                          window.open(job?.application_details?.url, "_blank");
+                        } else {
+                          console.warn(
+                            "No application URL available for this job.",
+                          );
+                        }
                         setActivePopupIndex(null);
                       }}
                     >
