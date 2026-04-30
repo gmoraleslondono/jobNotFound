@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
@@ -8,13 +8,68 @@ const JobDetails = () => {
   const { jobId } = useParams();
 
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
   const addJobToApplied = useMutation(trpc.applyToJob.mutationOptions());
+  const { data: appliedStatus } = useQuery(
+    trpc.getAppliedStatusById.queryOptions(jobId || ""),
+  );
 
-  const handleApplyNowClick = () => {
-    addJobToApplied.mutate({ id: jobId || "", status: "applied" });
+  const handleApplyClick = () => {
+    addJobToApplied.mutate(
+      { id: jobId || "", status: "applied" },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(
+            trpc.getAppliedStatusById.queryFilter(jobId || ""),
+          );
+        },
+      },
+    );
+    console.log("applied", jobId);
   };
+
+  const handleInterviewingClick = () => {
+    addJobToApplied.mutate(
+      { id: jobId || "", status: "interviewing" },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(
+            trpc.getAppliedStatusById.queryFilter(jobId || ""),
+          );
+        },
+      },
+    );
+  };
+
+  const handleAcceptOfferClick = () => {
+    addJobToApplied.mutate(
+      { id: jobId || "", status: "hired" },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(
+            trpc.getAppliedStatusById.queryFilter(jobId || ""),
+          );
+        },
+      },
+    );
+  };
+
+  const handleDeclinedClick = () => {
+    addJobToApplied.mutate(
+      { id: jobId || "", status: "declined" },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(
+            trpc.getAppliedStatusById.queryFilter(jobId || ""),
+          );
+        },
+      },
+    );
+  };
+
+  const status = appliedStatus?.status;
 
   return (
     <div className="job-details app-content">
@@ -53,13 +108,41 @@ const JobDetails = () => {
         >
           Add to favorites
         </button>
-        <button
-          className="bt-action bt-apply"
-          type="button"
-          onClick={() => handleApplyNowClick()}
-        >
-          Applied
-        </button>
+        {!status && (
+          <button
+            className="bt-action bt-apply"
+            type="button"
+            onClick={() => handleApplyClick()}
+          >
+            Mark as applied
+          </button>
+        )}
+        {status === "applied" ? (
+          <button
+            className="bt-action bt-apply"
+            type="button"
+            onClick={() => handleInterviewingClick()}
+          >
+            Interviewing
+          </button>
+        ) : status === "interviewing" ? (
+          <button
+            className="bt-action bt-apply"
+            type="button"
+            onClick={() => handleAcceptOfferClick()}
+          >
+            Accept offer
+          </button>
+        ) : null}
+        {(status === "applied" || status === "interviewing") && (
+          <button
+            className="bt-action bt-apply"
+            type="button"
+            onClick={() => handleDeclinedClick()}
+          >
+            Declined
+          </button>
+        )}
       </div>
     </div>
   );

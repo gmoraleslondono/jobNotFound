@@ -24,7 +24,18 @@ export const appRouter = router({
         `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
       );
       const searchResponse = searchResponseSchema.parse(response.data);
-      return searchResponse;
+
+      try {
+        await db.read();
+        const jobsWithStatus = searchResponse.hits.map((job) => {
+          const appliedJob = db.data?.appliedJobs?.find((j) => j.id === job.id);
+          const isFavorite = db.data?.favorites?.some((f) => f.id === job.id);
+          return { ...job, status: appliedJob?.status, isFavorite };
+        });
+        return { ...searchResponse, hits: jobsWithStatus };
+      } catch {
+        return searchResponse;
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         console.error("Validation error:", error.issues);
@@ -42,7 +53,17 @@ export const appRouter = router({
       }
       const response = await axios.get(`${JOB_SEARCH_BASE_API}/ad/${id}`);
       const jobAdSearchResult = jobAdSearchResultSchema.parse(response.data);
-      return jobAdSearchResult;
+
+      try {
+        await db.read();
+        const job = db.data?.appliedJobs?.find((j) => j.id === id);
+        const isFavorite = db.data?.favorites?.some((f) => f.id === id);
+        if (job || isFavorite) {
+          return { ...jobAdSearchResult, status: job?.status, isFavorite };
+        }
+      } catch {
+        return jobAdSearchResult;
+      }
     } catch (error) {
       console.error("Error fetching job details:", error);
       throw new Error("An error occurred while fetching job details.");
@@ -57,19 +78,30 @@ export const appRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      await db.read();
-
-      const exists = db.data.applied.some((job) => job.id === input.id);
-
-      if (exists) {
-        return;
+      try {
+        await db.read();
+        const existing = db.data?.appliedJobs?.find((j) => j.id === input.id);
+        if (existing) {
+          existing.status = input.status;
+        } else {
+          db.data.appliedJobs.push({ id: input.id, status: input.status });
+        }
+        await db.write();
+      } catch {
+        // ignore
       }
+    }),
 
-      db.data.applied.push({
-        id: input.id,
-        status: input.status,
-      });
-      await db.write();
+  getAppliedStatusById: publicProcedure
+    .input(z.string())
+    .query(async ({ input: id }) => {
+      try {
+        await db.read();
+        const job = db.data?.appliedJobs?.find((j) => j.id === id);
+        return { status: job?.status };
+      } catch {
+        return { status: null };
+      }
     }),
 });
 
