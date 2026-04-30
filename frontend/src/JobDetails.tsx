@@ -15,6 +15,10 @@ const JobDetails = () => {
   const { data: appliedStatus } = useQuery(
     trpc.getAppliedStatusById.queryOptions(jobId || ""),
   );
+  const { data: isFavorite } = useQuery(
+    trpc.getIsFavoriteById.queryOptions(jobId || ""),
+  );
+  const toggleFavorite = useMutation(trpc.toggleFavorite.mutationOptions());
 
   const handleApplyClick = () => {
     addJobToApplied.mutate(
@@ -69,6 +73,19 @@ const JobDetails = () => {
     );
   };
 
+  const handleFavoriteClick = () => {
+    toggleFavorite.mutate(
+      { id: jobId || "" },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(
+            trpc.getIsFavoriteById.queryFilter(jobId || ""),
+          );
+        },
+      },
+    );
+  };
+
   const status = appliedStatus?.status;
 
   return (
@@ -102,11 +119,9 @@ const JobDetails = () => {
         <button
           className="bt-action bt-favorite"
           type="button"
-          onClick={() => {
-            console.log("Add to favorites", jobId);
-          }}
+          onClick={() => handleFavoriteClick()}
         >
-          Add to favorites
+          {isFavorite ? "Remove from favorites" : "Add to favorites"}
         </button>
         {!status && (
           <button

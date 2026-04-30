@@ -103,6 +103,37 @@ export const appRouter = router({
         return { status: null };
       }
     }),
+
+  getIsFavoriteById: publicProcedure
+    .input(z.string())
+    .query(async ({ input: id }) => {
+      try {
+        await db.read();
+        const isFavorite = db.data?.favorites?.some((f) => f.id === id);
+        return isFavorite;
+      } catch {
+        return false;
+      }
+    }),
+
+  toggleFavorite: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await db.read();
+        const index = db.data?.favorites?.findIndex((f) => f.id === input.id);
+        if (index !== undefined) {
+          if (index >= 0) {
+            db.data?.favorites?.splice(index, 1);
+          } else {
+            db.data?.favorites?.push({ id: input.id });
+          }
+          await db.write();
+        }
+      } catch {
+        // ignore
+      }
+    }),
 });
 
 export type AppRouter = typeof appRouter;
