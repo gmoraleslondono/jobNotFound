@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import "./Home.css";
@@ -10,24 +9,6 @@ export const Home = () => {
   const { data: searchResults, isLoading } = useQuery(
     trpc.getJobs.queryOptions(),
   );
-
-  const [activePopupIndex, setActivePopupIndex] = useState<number | null>(null);
-  const popupRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        activePopupIndex !== null &&
-        popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
-      ) {
-        setActivePopupIndex(null);
-      }
-    };
-
-    window.addEventListener("mousedown", handleClickOutside);
-    return () => window.removeEventListener("mousedown", handleClickOutside);
-  }, [activePopupIndex]);
 
   const jobAds = searchResults?.hits || [];
 
@@ -57,52 +38,7 @@ export const Home = () => {
                   </p>
                 </div>
               </div>
-              <div
-                className="options-container"
-                ref={activePopupIndex === index ? popupRef : null}
-              >
-                <button
-                  className="options-button"
-                  type="button"
-                  onClick={() =>
-                    setActivePopupIndex((current) =>
-                      current === index ? null : index,
-                    )
-                  }
-                >
-                  Options
-                </button>
-                {activePopupIndex === index && (
-                  <div className="options-popup">
-                    <button
-                      className="bt-action"
-                      type="button"
-                      onClick={() => {
-                        console.log("Add to favorites", index);
-                        setActivePopupIndex(null);
-                      }}
-                    >
-                      Add to favorites
-                    </button>
-                    <button
-                      className="bt-action bt-apply"
-                      type="button"
-                      onClick={() => {
-                        if (job?.application_details?.url) {
-                          window.open(job?.application_details?.url, "_blank");
-                        } else {
-                          console.warn(
-                            "No application URL available for this job.",
-                          );
-                        }
-                        setActivePopupIndex(null);
-                      }}
-                    >
-                      Apply now
-                    </button>
-                  </div>
-                )}
-              </div>
+              {/* <div className="options-container"></div> */}
             </li>
           ))}
         </ul>

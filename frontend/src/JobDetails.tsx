@@ -90,7 +90,6 @@ export const JobDetails = () => {
 
   return (
     <div className="job-details app-content">
-      <h1>Job Details</h1>
       <div className="content">
         <h2 className="headline">{jobAd?.headline}</h2>
         <div className="info">
@@ -107,6 +106,7 @@ export const JobDetails = () => {
         <p className="description">{jobAd?.description?.text}</p>
         {jobAd?.application_details?.url && (
           <a
+            className="apply-link"
             href={jobAd?.application_details?.url}
             target="_blank"
             rel="noopener noreferrer"

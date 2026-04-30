@@ -4,10 +4,11 @@
 
 .headline {
   color: white;
+  font-size: 40px;
+  font-weight: 600;
 }
 
 .info {
-  text-align: justify;
   margin: 20px 0;
   line-height: 1.6;
 }
