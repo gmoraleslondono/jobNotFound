@@ -3,7 +3,7 @@ import {
   searchResponseSchema,
   jobAdSearchResultSchema,
   jobStatusSchema,
-} from "./schemas.ts";
+} from "./arbetsförmedlingensSchemas.ts";
 import { publicProcedure, router } from "./trpc.ts";
 import axios from "axios";
 import { db } from "./db.ts";

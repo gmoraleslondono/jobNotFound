@@ -1,20 +1,20 @@
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import z from "zod";
-import type { jobStatusSchema } from "./schemas";
+import type { jobStatusSchema } from "./arbetsförmedlingensSchemas";
 
 type JobStatus = z.infer<typeof jobStatusSchema>;
 
 type Data = {
   favorites: { id: string }[];
-  applied: { id: string; status: JobStatus }[];
+  appliedJobs: { id: string; status: JobStatus }[];
 };
 
 // const file = join("/data", "db.json");
 
 const db = new Low<Data>(new JSONFile("db.json"), {
   favorites: [],
-  applied: [],
+  appliedJobs: [],
 });
 await db.read();
 
