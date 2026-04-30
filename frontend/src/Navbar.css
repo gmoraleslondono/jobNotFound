@@ -1,0 +1,20 @@
+.app-navbar {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bt-nav {
+  color: var(--text-white);
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.active {
+  text-decoration: underline;
+  font-weight: 500;
+}

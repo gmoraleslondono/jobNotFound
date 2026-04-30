@@ -4,7 +4,7 @@ import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
 import { useParams } from "react-router-dom";
 
-const JobDetails = () => {
+export const JobDetails = () => {
   const { jobId } = useParams();
 
   const trpc = useTRPC();
@@ -162,5 +162,3 @@ const JobDetails = () => {
     </div>
   );
 };
-
-export default JobDetails;
