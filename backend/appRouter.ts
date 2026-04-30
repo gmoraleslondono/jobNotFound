@@ -62,8 +62,9 @@ export const appRouter = router({
           return { ...jobAdSearchResult, status: job?.status, isFavorite };
         }
       } catch {
-        return jobAdSearchResult;
+        // ignore
       }
+      return jobAdSearchResult;
     } catch (error) {
       console.error("Error fetching job details:", error);
       throw new Error("An error occurred while fetching job details.");
