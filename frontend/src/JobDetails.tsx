@@ -1,18 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
+import { useParams } from "react-router-dom";
 
 const JobDetails = () => {
-  const jobId = window.location.pathname.split("/").pop();
-  console.log("Job ID from URL:", jobId);
+  const { jobId } = useParams();
 
   const trpc = useTRPC();
-  const { data: jobAd } = useQuery(
-    trpc.getJobDetails.queryOptions(jobId || ""),
-  );
 
-  console.log("Search result in JobDetails:", jobAd);
+  const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
+  const addJobToApplied = useMutation(trpc.applyToJob.mutationOptions());
+
+  const handleApplyNowClick = () => {
+    addJobToApplied.mutate({ id: jobId || "", status: "applied" });
+  };
 
   return (
     <div className="job-details app-content">
@@ -31,6 +33,15 @@ const JobDetails = () => {
           </p>
         </div>
         <p className="description">{jobAd?.description?.text}</p>
+        {jobAd?.application_details?.url && (
+          <a
+            href={jobAd?.application_details?.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Apply here: {jobAd?.application_details?.url}
+          </a>
+        )}
       </div>
       <div className="actions">
         <button
@@ -45,15 +56,9 @@ const JobDetails = () => {
         <button
           className="bt-action bt-apply"
           type="button"
-          onClick={() => {
-            if (jobAd?.application_details?.url) {
-              window.open(jobAd?.application_details?.url, "_blank");
-            } else {
-              console.warn("No application URL available for this job.");
-            }
-          }}
+          onClick={() => handleApplyNowClick()}
         >
-          Apply now
+          Applied
         </button>
       </div>
     </div>

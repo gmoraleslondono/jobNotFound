@@ -158,4 +158,11 @@ const searchResponseSchema = z.object({
   hits: z.array(jobAdSearchResultSchema),
 });
 
-export { searchResponseSchema, jobAdSearchResultSchema };
+const jobStatusSchema = z.enum([
+  "applied",
+  "interviewing",
+  "declined",
+  "hired",
+]);
+
+export { searchResponseSchema, jobAdSearchResultSchema, jobStatusSchema };

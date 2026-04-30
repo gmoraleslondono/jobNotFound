@@ -9,7 +9,7 @@ export function App() {
       <h1>Job Not Found</h1>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/job/:id" element={<JobDetails />} />
+        <Route path="/job/:jobId" element={<JobDetails />} />
       </Routes>
     </Router>
   );
