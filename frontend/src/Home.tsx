@@ -3,6 +3,7 @@ import { useTRPC } from "./trpc";
 import "./Home.css";
 import { Link } from "react-router-dom";
 import { formatDate } from "./dateUtils";
+import { ActionButtons } from "./ActionButtons";
 
 export const Home = () => {
   const trpc = useTRPC();
@@ -38,7 +39,7 @@ export const Home = () => {
                   </p>
                 </div>
               </div>
-              {/* <div className="options-container"></div> */}
+              <ActionButtons jobId={job.id || ""} />
             </li>
           ))}
         </ul>

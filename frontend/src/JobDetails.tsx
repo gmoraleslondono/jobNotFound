@@ -1,92 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
 import { useParams } from "react-router-dom";
+import { ActionButtons } from "./ActionButtons";
 
 export const JobDetails = () => {
   const { jobId } = useParams();
 
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
   const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
-  const addJobToApplied = useMutation(trpc.applyToJob.mutationOptions());
-  const { data: appliedStatus } = useQuery(
-    trpc.getAppliedStatusById.queryOptions(jobId || ""),
-  );
-  const { data: isFavorite } = useQuery(
-    trpc.getIsFavoriteById.queryOptions(jobId || ""),
-  );
-  const toggleFavorite = useMutation(trpc.toggleFavorite.mutationOptions());
-
-  const handleApplyClick = () => {
-    addJobToApplied.mutate(
-      { id: jobId || "", status: "applied" },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            trpc.getAppliedStatusById.queryFilter(jobId || ""),
-          );
-        },
-      },
-    );
-    console.log("applied", jobId);
-  };
-
-  const handleInterviewingClick = () => {
-    addJobToApplied.mutate(
-      { id: jobId || "", status: "interviewing" },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            trpc.getAppliedStatusById.queryFilter(jobId || ""),
-          );
-        },
-      },
-    );
-  };
-
-  const handleAcceptOfferClick = () => {
-    addJobToApplied.mutate(
-      { id: jobId || "", status: "hired" },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            trpc.getAppliedStatusById.queryFilter(jobId || ""),
-          );
-        },
-      },
-    );
-  };
-
-  const handleDeclinedClick = () => {
-    addJobToApplied.mutate(
-      { id: jobId || "", status: "declined" },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            trpc.getAppliedStatusById.queryFilter(jobId || ""),
-          );
-        },
-      },
-    );
-  };
-
-  const handleFavoriteClick = () => {
-    toggleFavorite.mutate(
-      { id: jobId || "" },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            trpc.getIsFavoriteById.queryFilter(jobId || ""),
-          );
-        },
-      },
-    );
-  };
-
-  const status = appliedStatus?.status;
 
   return (
     <div className="job-details app-content">
@@ -115,50 +39,7 @@ export const JobDetails = () => {
           </a>
         )}
       </div>
-      <div className="actions">
-        <button
-          className="bt-action bt-favorite"
-          type="button"
-          onClick={() => handleFavoriteClick()}
-        >
-          {isFavorite ? "Remove from favorites" : "Add to favorites"}
-        </button>
-        {!status && (
-          <button
-            className="bt-action bt-apply"
-            type="button"
-            onClick={() => handleApplyClick()}
-          >
-            Mark as applied
-          </button>
-        )}
-        {status === "applied" ? (
-          <button
-            className="bt-action bt-apply"
-            type="button"
-            onClick={() => handleInterviewingClick()}
-          >
-            Interviewing
-          </button>
-        ) : status === "interviewing" ? (
-          <button
-            className="bt-action bt-apply"
-            type="button"
-            onClick={() => handleAcceptOfferClick()}
-          >
-            Accept offer
-          </button>
-        ) : null}
-        {(status === "applied" || status === "interviewing") && (
-          <button
-            className="bt-action bt-apply"
-            type="button"
-            onClick={() => handleDeclinedClick()}
-          >
-            Declined
-          </button>
-        )}
-      </div>
+      <ActionButtons jobId={jobId || ""} />
     </div>
   );
 };

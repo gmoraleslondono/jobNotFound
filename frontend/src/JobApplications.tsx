@@ -1,4 +1,4 @@
-export const Applications = () => {
+export const JobApplications = () => {
   return (
     <div>
       <h2>Applications</h2>
