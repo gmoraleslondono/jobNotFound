@@ -5,7 +5,6 @@ import {
   jobStatusSchema,
 } from "./arbetsförmedlingensSchemas.ts";
 import { publicProcedure, router } from "./trpc.ts";
-import axios from "axios";
 import { db } from "./db.ts";
 
 const JOB_SEARCH_BASE_API = "https://jobsearch.api.jobtechdev.se";
@@ -20,10 +19,18 @@ export const appRouter = router({
         limit: "100",
       });
 
-      const response = await axios.get(
+      const response = await fetch(
         `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
       );
-      const searchResponse = searchResponseSchema.parse(response.data);
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch job listings: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const data = await response.json();
+      const searchResponse = searchResponseSchema.parse(data);
 
       try {
         await db.read();
@@ -51,8 +58,16 @@ export const appRouter = router({
       if (!id) {
         throw new Error("Job ID is required to fetch job details.");
       }
-      const response = await axios.get(`${JOB_SEARCH_BASE_API}/ad/${id}`);
-      const jobAdSearchResult = jobAdSearchResultSchema.parse(response.data);
+      const response = await fetch(`${JOB_SEARCH_BASE_API}/ad/${id}`);
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch job details: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const data = await response.json();
+      const jobAdSearchResult = jobAdSearchResultSchema.parse(data);
 
       try {
         await db.read();
