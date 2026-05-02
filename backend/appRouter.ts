@@ -167,6 +167,15 @@ export const appRouter = router({
       return [];
     }
   }),
+
+  getJobApplications: publicProcedure.query(async () => {
+    try {
+      await db.read();
+      return db.data?.appliedJobs;
+    } catch {
+      return [];
+    }
+  }),
 });
 
 export type AppRouter = typeof appRouter;

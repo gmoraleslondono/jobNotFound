@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { JobAdCard } from "./JobAdCard";
+import { useToggleFavorite } from "./useToggleFavorite";
 
 export const Favorites = () => {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const { handleToggleFavorite } = useToggleFavorite();
   const {
     data: favorites,
     isLoading: isFavoritesLoading,
@@ -19,16 +20,6 @@ export const Favorites = () => {
     enabled: Boolean(favorites?.length),
   });
 
-  const toggleFavorite = useMutation(
-    trpc.toggleFavorite.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries(trpc.getFavorites.queryOptions());
-        queryClient.invalidateQueries(trpc.getJobs.queryOptions());
-      },
-    }),
-  );
-
-  const handleToggleFavorite = (id: string) => toggleFavorite.mutate({ id });
   const favoritesList = favorites || [];
 
   const favoriteJobAds = jobAds?.hits.filter((job) =>
