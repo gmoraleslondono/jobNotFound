@@ -3,20 +3,9 @@ import {
   searchResponseSchema,
   jobAdSearchResultSchema,
 } from "./arbetsförmedlingensSchemas.ts";
+import { jobStatusSchema, jobWithStatusSchema } from "./schemas.ts";
 import { publicProcedure, router } from "./trpc.ts";
 import { db } from "./db.ts";
-
-const jobStatusSchema = z.enum([
-  "applied",
-  "interviewing",
-  "declined",
-  "hired",
-]);
-
-const jobWithStatusSchema = jobAdSearchResultSchema.extend({
-  isFavorite: z.boolean().optional(),
-  status: jobStatusSchema.optional(),
-});
 
 const searchResponseWithStatusSchema = searchResponseSchema.extend({
   hits: z.array(jobWithStatusSchema),
