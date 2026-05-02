@@ -1,10 +1,9 @@
 import { useJobActions } from "./useJobActions";
+import "./ActionButtons.css";
 
 export function ActionButtons({ jobId }: { jobId: string }) {
   const {
     status,
-    isFavorite,
-    handleFavoriteClick,
     handleApplyClick,
     handleInterviewingClick,
     handleAcceptOfferClick,
@@ -13,13 +12,6 @@ export function ActionButtons({ jobId }: { jobId: string }) {
 
   return (
     <div className="actions">
-      <button
-        className="bt-action bt-favorite"
-        type="button"
-        onClick={handleFavoriteClick}
-      >
-        {isFavorite ? "Remove from favorites" : "Add to favorites"}
-      </button>
       {!status && (
         <button
           className="bt-action bt-apply"
@@ -31,7 +23,7 @@ export function ActionButtons({ jobId }: { jobId: string }) {
       )}
       {status === "applied" ? (
         <button
-          className="bt-action bt-apply"
+          className="bt-action bt-interviewing"
           type="button"
           onClick={handleInterviewingClick}
         >
@@ -39,7 +31,7 @@ export function ActionButtons({ jobId }: { jobId: string }) {
         </button>
       ) : status === "interviewing" ? (
         <button
-          className="bt-action bt-apply"
+          className="bt-action bt-accept"
           type="button"
           onClick={handleAcceptOfferClick}
         >
@@ -48,7 +40,7 @@ export function ActionButtons({ jobId }: { jobId: string }) {
       ) : null}
       {(status === "applied" || status === "interviewing") && (
         <button
-          className="bt-action bt-apply"
+          className="bt-action bt-declined"
           type="button"
           onClick={handleDeclinedClick}
         >

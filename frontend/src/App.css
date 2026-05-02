@@ -8,34 +8,3 @@
     width: 90%;
   }
 }
-
-.bt-action {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #f8f8f8;
-  color: #222;
-  cursor: pointer;
-  text-align: center;
-  margin-bottom: 8px;
-
-  /* mobile */
-  @media (max-width: 1024px) {
-    width: 100%;
-  }
-}
-
-.bt-action:last-child {
-  margin-bottom: 0;
-}
-
-.bt-action:hover {
-  background: #e9f1ff;
-}
-
-.bt-apply {
-  border-color: #0071e3;
-  background: #e9f4ff;
-  color: #024a95;
-}

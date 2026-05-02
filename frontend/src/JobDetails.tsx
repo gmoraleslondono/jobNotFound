@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
@@ -7,15 +7,41 @@ import { ActionButtons } from "./ActionButtons";
 
 export const JobDetails = () => {
   const { jobId } = useParams();
+  const queryClient = useQueryClient();
 
   const trpc = useTRPC();
 
+  const toggleFavorite = useMutation(trpc.toggleFavorite.mutationOptions());
+
   const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
+
+  const { data: isFavorite } = useQuery(
+    trpc.getIsFavoriteById.queryOptions(jobId || ""),
+  );
+
+  const handleFavoriteClick = () =>
+    toggleFavorite.mutate(
+      { id: jobId || "" },
+      {
+        onSuccess: () =>
+          queryClient.invalidateQueries(
+            trpc.getIsFavoriteById.queryFilter(jobId),
+          ),
+      },
+    );
 
   return (
     <div className="job-details app-content">
       <div className="content">
-        <h2 className="headline">{jobAd?.headline}</h2>
+        <div>
+          <span
+            onClick={handleFavoriteClick}
+            className={isFavorite ? "favorite-icon" : "not-favorite-icon"}
+          >
+            {isFavorite ? "★" : "☆"}
+          </span>
+          <h2 className="headline">{jobAd?.headline}</h2>
+        </div>
         <div className="info">
           <p className="relevant-info">Company: {jobAd?.employer?.name}</p>
           <p className="relevant-info">

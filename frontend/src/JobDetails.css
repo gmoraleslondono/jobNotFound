@@ -21,15 +21,6 @@
 }
 
 .actions {
-  width: 50%;
-  margin-top: 40px;
-  display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 20px;
-
-  /* mobile */
-  @media (max-width: 1024px) {
-    width: 100%;
-  }
 }
