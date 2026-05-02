@@ -22,7 +22,7 @@ export const JobApplications = () => {
 
   const applicationIds = new Set((jobApplications || []).map((job) => job.id));
   const appliedJobAds = (jobAds?.hits || []).filter((job) =>
-    applicationIds.has(job.id),
+    applicationIds.has(job.id)
   );
 
   if (isApplicationsLoading || isJobsLoading) {

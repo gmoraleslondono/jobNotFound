@@ -6,7 +6,7 @@ export function useJobActions(jobId: string) {
   const queryClient = useQueryClient();
 
   const { data: appliedStatus } = useQuery(
-    trpc.getAppliedStatusById.queryOptions(jobId),
+    trpc.getAppliedStatusById.queryOptions(jobId)
   );
   const addJobToApplied = useMutation(trpc.applyToJob.mutationOptions());
 
@@ -16,25 +16,25 @@ export function useJobActions(jobId: string) {
   const handleApplyClick = () =>
     addJobToApplied.mutate(
       { id: jobId, status: "applied" },
-      { onSuccess: invalidateStatus },
+      { onSuccess: invalidateStatus }
     );
 
   const handleInterviewingClick = () =>
     addJobToApplied.mutate(
       { id: jobId, status: "interviewing" },
-      { onSuccess: invalidateStatus },
+      { onSuccess: invalidateStatus }
     );
 
   const handleAcceptOfferClick = () =>
     addJobToApplied.mutate(
       { id: jobId, status: "hired" },
-      { onSuccess: invalidateStatus },
+      { onSuccess: invalidateStatus }
     );
 
   const handleDeclinedClick = () =>
     addJobToApplied.mutate(
       { id: jobId, status: "declined" },
-      { onSuccess: invalidateStatus },
+      { onSuccess: invalidateStatus }
     );
 
   return {

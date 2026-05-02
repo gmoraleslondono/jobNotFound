@@ -21,7 +21,7 @@ export const appRouter = router({
           offset: z.number().int().min(0).default(0),
           limit: z.number().int().min(1).max(100).default(20),
         })
-        .optional(),
+        .optional()
     )
     .query(async ({ input }) => {
       try {
@@ -35,7 +35,7 @@ export const appRouter = router({
         });
 
         const response = await fetch(
-          `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
+          `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`
         );
 
         if (!response.ok) {
@@ -99,7 +99,7 @@ export const appRouter = router({
       z.object({
         id: z.string(),
         status: jobStatusSchema,
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       try {

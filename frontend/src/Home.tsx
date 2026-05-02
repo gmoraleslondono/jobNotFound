@@ -27,7 +27,7 @@ export const Home = () => {
     getNextPageParam: (lastPage, allPages) => {
       const fetchedCount = allPages.reduce(
         (count, page) => count + page.hits.length,
-        0,
+        0
       );
       return fetchedCount < lastPage.total.value ? fetchedCount : undefined;
     },
@@ -53,7 +53,10 @@ export const Home = () => {
             ))}
           </ul>
           {hasNextPage && (
-            <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+            >
               {isFetchingNextPage ? "Loading more..." : "Load more jobs"}
             </button>
           )}

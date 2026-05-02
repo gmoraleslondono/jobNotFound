@@ -16,7 +16,7 @@ export const JobDetails = () => {
   const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
 
   const { data: isFavorite } = useQuery(
-    trpc.getIsFavoriteById.queryOptions(jobId || ""),
+    trpc.getIsFavoriteById.queryOptions(jobId || "")
   );
 
   const handleFavoriteClick = () =>
@@ -25,9 +25,9 @@ export const JobDetails = () => {
       {
         onSuccess: () =>
           queryClient.invalidateQueries(
-            trpc.getIsFavoriteById.queryFilter(jobId),
+            trpc.getIsFavoriteById.queryFilter(jobId)
           ),
-      },
+      }
     );
 
   return (

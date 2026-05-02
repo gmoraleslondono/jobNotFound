@@ -26,10 +26,10 @@ export function useToggleFavorite() {
               hits: old.hits.map((job) =>
                 job.id === variables.id
                   ? { ...job, isFavorite: !job.isFavorite }
-                  : job,
+                  : job
               ),
             };
-          },
+          }
         );
       },
       onSuccess: () => {
@@ -37,7 +37,7 @@ export function useToggleFavorite() {
         queryClient.invalidateQueries(trpc.getFavorites.queryOptions());
         queryClient.invalidateQueries(trpc.getJobApplications.queryOptions());
       },
-    }),
+    })
   );
 
   const handleToggleFavorite = (id: string) => toggleFavorite.mutate({ id });

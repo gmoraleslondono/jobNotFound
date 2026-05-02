@@ -23,7 +23,7 @@ export const Favorites = () => {
   const favoritesList = favorites || [];
 
   const favoriteJobAds = jobAds?.hits.filter((job) =>
-    favoritesList.some((favorite) => favorite.id === job.id),
+    favoritesList.some((favorite) => favorite.id === job.id)
   );
 
   if (isFavoritesLoading || isJobsLoading) {
