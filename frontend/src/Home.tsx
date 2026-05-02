@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "../../backend/appRouter";
 import { useTRPC } from "./trpc";
-import "./Home.css";
-import { Link } from "react-router-dom";
-import { formatDate } from "./dateUtils";
-import { ActionButtons } from "./ActionButtons";
+import { JobAdCard } from "./JobAdCard";
+
+type RouterInputs = inferRouterInputs<AppRouter>;
+type RouterOutputs = inferRouterOutputs<AppRouter>;
+type ToggleFavoriteInput = RouterInputs["toggleFavorite"];
+type JobsResponse = RouterOutputs["getJobs"];
 
 export const Home = () => {
   const trpc = useTRPC();
@@ -15,18 +19,20 @@ export const Home = () => {
 
   const toggleFavorite = useMutation(
     trpc.toggleFavorite.mutationOptions({
-      onMutate: (variables) => {
+      onMutate: (variables: ToggleFavoriteInput) => {
+        if (!variables) return;
         queryClient.setQueryData(
           trpc.getJobs.queryOptions().queryKey,
-          (old: typeof searchResults) => {
+          (old: JobsResponse | undefined) => {
             if (!old) return old;
             return {
               ...old,
-              hits: old.hits.map((job) =>
-                job.id === variables.id
-                  ? { ...job, isFavorite: !job.isFavorite }
-                  : job,
-              ),
+              hits: old.hits.map((job) => {
+                const currentJob = job as Exclude<typeof job, void>;
+                return currentJob.id === variables.id
+                  ? { ...currentJob, isFavorite: !currentJob.isFavorite }
+                  : currentJob;
+              }),
             };
           },
         );
@@ -46,52 +52,12 @@ export const Home = () => {
         <p>Loading jobs...</p>
       ) : (
         <ul>
-          {jobAds.map((job, index: number) => (
-            <li className="job-card" key={index}>
-              <div>
-                <div className="header">
-                  <span
-                    onClick={() => handleToggleFavorite(job.id)}
-                    className={`${job.isFavorite ? "favorite-icon" : "not-favorite-icon"} icon`}
-                    aria-label="Toggle favorite"
-                  >
-                    <img
-                      src={
-                        job.isFavorite
-                          ? "/icons/heart-favorite.svg"
-                          : "/icons/heart.svg"
-                      }
-                      alt={job.isFavorite ? "Favorite" : "Not favorite"}
-                      width={20}
-                      height={20}
-                    />
-                  </span>
-
-                  <Link to={`/job/${job.id}`} className="job-link">
-                    <h2 className="job-headline job-headline-clickable">
-                      {job.headline}
-                    </h2>
-                  </Link>
-                </div>
-                <div>
-                  <p className="card-content">Company: {job.employer?.name}</p>
-                  <p className="card-content">
-                    Type of contract: {job.duration?.label} -{" "}
-                    {job.working_hours_type?.label}
-                  </p>
-                  <p className="card-content">
-                    Last application date:{" "}
-                    {formatDate(job.application_deadline || "")}
-                  </p>
-                  <div className="labels">
-                    {job.status && (
-                      <span className="status-label">{job.status}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <ActionButtons jobId={job.id || ""} />
-            </li>
+          {jobAds.map((job) => (
+            <JobAdCard
+              key={job.id}
+              job={job}
+              onToggleFavorite={handleToggleFavorite}
+            />
           ))}
         </ul>
       )}

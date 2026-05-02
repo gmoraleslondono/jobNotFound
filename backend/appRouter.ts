@@ -158,6 +158,15 @@ export const appRouter = router({
         // ignore
       }
     }),
+
+  getFavorites: publicProcedure.query(async () => {
+    try {
+      await db.read();
+      return db.data?.favorites;
+    } catch {
+      return [];
+    }
+  }),
 });
 
 export type AppRouter = typeof appRouter;
