@@ -14,50 +14,61 @@ const searchResponseWithStatusSchema = searchResponseSchema.extend({
 const JOB_SEARCH_BASE_API = "https://jobsearch.api.jobtechdev.se";
 
 export const appRouter = router({
-  getJobs: publicProcedure.query(async () => {
-    try {
-      const queryParams = new URLSearchParams({
-        municipality: "AvNB_uwa_6n6",
-        q: "frontend",
-        offset: "0",
-        limit: "100",
-      });
+  getJobs: publicProcedure
+    .input(
+      z
+        .object({
+          offset: z.number().int().min(0).default(0),
+          limit: z.number().int().min(1).max(100).default(20),
+        })
+        .optional(),
+    )
+    .query(async ({ input }) => {
+      try {
+        const offset = input?.offset ?? 0;
+        const limit = input?.limit ?? 20;
+        const queryParams = new URLSearchParams({
+          municipality: "AvNB_uwa_6n6",
+          q: "frontend",
+          offset: offset.toString(),
+          limit: limit.toString(),
+        });
 
-      const response = await fetch(
-        `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
-      );
+        const response = await fetch(
+          `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
+        );
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch job listings: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch job listings: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const pageResponse = searchResponseSchema.parse(data);
+
+        await db.read();
+        const jobsWithStatus = pageResponse.hits.map((job) => {
+          const appliedJob = db.data?.appliedJobs?.find((j) => j.id === job.id);
+          const isFavorite = db.data?.favorites?.some((f) => f.id === job.id);
+          return {
+            ...job,
+            status: appliedJob?.status,
+            isFavorite: isFavorite ?? false,
+          };
+        });
+
+        return searchResponseWithStatusSchema.parse({
+          ...pageResponse,
+          hits: jobsWithStatus,
+        });
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.error("Validation error:", error.issues);
+          throw error;
+        }
+        console.error("Error fetching job listings:", error);
+        throw new Error("An error occurred while fetching job listings.");
       }
-
-      const data = await response.json();
-      const searchResponse = searchResponseSchema.parse(data);
-
-      await db.read();
-      const jobsWithStatus = searchResponse.hits.map((job) => {
-        const appliedJob = db.data?.appliedJobs?.find((j) => j.id === job.id);
-        const isFavorite = db.data?.favorites?.some((f) => f.id === job.id);
-        return {
-          ...job,
-          status: appliedJob?.status,
-          isFavorite: isFavorite ?? false,
-        };
-      });
-
-      return searchResponseWithStatusSchema.parse({
-        ...searchResponse,
-        hits: jobsWithStatus,
-      });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.error("Validation error:", error.issues);
-        throw error;
-      }
-      console.error("Error fetching job listings:", error);
-      throw new Error("An error occurred while fetching job listings.");
-    }
-  }),
+    }),
 
   getJob: publicProcedure.input(z.string()).query(async ({ input: id }) => {
     try {
