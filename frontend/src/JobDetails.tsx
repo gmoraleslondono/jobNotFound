@@ -1,18 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
 import { useParams } from "react-router-dom";
 import { ActionButtons } from "./ActionButtons";
 import { JobAdHeader } from "./JobAdHeader";
+import { useToggleFavorite } from "./useToggleFavorite";
 
 export const JobDetails = () => {
   const { jobId } = useParams();
-  const queryClient = useQueryClient();
 
   const trpc = useTRPC();
-
-  const toggleFavorite = useMutation(trpc.toggleFavorite.mutationOptions());
+  const { handleToggleFavorite } = useToggleFavorite();
 
   const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
 
@@ -20,27 +19,16 @@ export const JobDetails = () => {
     trpc.getIsFavoriteById.queryOptions(jobId || "")
   );
 
-  const handleFavoriteClick = () =>
-    toggleFavorite.mutate(
-      { id: jobId || "" },
-      {
-        onSuccess: () =>
-          queryClient.invalidateQueries(
-            trpc.getIsFavoriteById.queryFilter(jobId)
-          ),
-      }
-    );
-
   return (
     <div className="job-details">
       <div className="content">
         <div>
           <JobAdHeader
-            jobId={jobAd?.id}
+            jobId={jobAd?.id ?? jobId ?? ""}
             headline={jobAd?.headline}
             status={jobAd?.status}
-            isFavorite={isFavorite}
-            onToggleFavorite={handleFavoriteClick}
+            isFavorite={Boolean(isFavorite)}
+            onToggleFavorite={handleToggleFavorite}
           />
         </div>
         <div className="info">

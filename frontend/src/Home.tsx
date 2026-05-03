@@ -1,6 +1,9 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { JobAdCard } from "./JobAdCard";
-import { useToggleFavorite } from "./useToggleFavorite";
+import {
+  HOME_INFINITE_JOBS_QUERY_KEY,
+  useToggleFavorite,
+} from "./useToggleFavorite";
 import { trpcClient } from "./trpc";
 import "./Home.css";
 
@@ -17,7 +20,7 @@ export const Home = () => {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["jobs", "infinite"],
+    queryKey: HOME_INFINITE_JOBS_QUERY_KEY,
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
       return trpcClient.getJobs.query({
