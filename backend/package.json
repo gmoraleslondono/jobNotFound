@@ -4,9 +4,13 @@
   "description": "",
   "main": "server.ts",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --exec 'node --experimental-strip-types' server.ts",
+    "start": "node --experimental-strip-types server.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

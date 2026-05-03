@@ -1,0 +1,30 @@
+# Render Blueprint: https://render.com/docs/infrastructure-as-code
+# After the first deploy, set these in the Render dashboard:
+#   jobnotfound-api  → FRONTEND_URL = your static site URL (https://…onrender.com)
+#   jobnotfound-web  → VITE_API_URL = your API URL (https://…onrender.com)
+# Then trigger a new deploy for both services so CORS and the built API URL apply.
+
+services:
+  - type: web
+    name: jobnotfound-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22.14.0"
+
+  - type: web
+    name: jobnotfound-web
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
