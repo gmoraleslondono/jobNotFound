@@ -26,20 +26,21 @@ export const JobApplications = () => {
   );
 
   if (isApplicationsLoading || isJobsLoading) {
-    return <div>Loading applications...</div>;
+    return <div className="text">Loading applications...</div>;
   }
 
   if (isApplicationsError || isJobsError) {
-    return <div>Could not load applications. Please try again.</div>;
+    return (
+      <div className="text">Could not load applications. Please try again.</div>
+    );
   }
 
   if (applicationIds.size === 0) {
-    return <div>There are no applications yet</div>;
+    return <div className="text">There are no applications yet.</div>;
   }
 
   return (
-    <div>
-      <h2>Applications</h2>
+    <div className="job-applications">
       <div className="jobApplications-list">
         <ul>
           {appliedJobAds.map((job) => (

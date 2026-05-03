@@ -31,7 +31,7 @@ export const JobDetails = () => {
     );
 
   return (
-    <div className="job-details app-content">
+    <div className="job-details">
       <div className="content">
         <div>
           <span
@@ -54,18 +54,25 @@ export const JobDetails = () => {
           </p>
         </div>
         <p className="description">{jobAd?.description?.text}</p>
-        {jobAd?.application_details?.url && (
-          <a
-            className="apply-link"
-            href={jobAd?.application_details?.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Apply here: {jobAd?.application_details?.url}
-          </a>
-        )}
+        <div className="apply-link-container">
+          {jobAd?.application_details?.url && (
+            <>
+              <p>Apply here:</p>
+              <a
+                className="apply-link"
+                href={jobAd?.application_details?.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {jobAd?.application_details?.url}
+              </a>
+            </>
+          )}
+        </div>
       </div>
-      <ActionButtons jobId={jobId || ""} />
+      <div className="action-container">
+        <ActionButtons jobId={jobId || ""} />
+      </div>
     </div>
   );
 };

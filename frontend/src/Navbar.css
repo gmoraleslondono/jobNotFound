@@ -7,7 +7,7 @@
 }
 
 .bt-nav {
-  color: var(--text-white);
+  color: var(--text-primary);
   border: none;
   font-size: 24px;
   cursor: pointer;

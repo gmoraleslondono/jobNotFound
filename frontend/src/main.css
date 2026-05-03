@@ -1,9 +1,9 @@
 :root {
-  --text: #090909;
-  --text-white: #fcf9f9;
-  --text-h1: #fcf9f9;
-  --text-h2: #090909;
-  --bg: #1a1f3a;
+  --text-primary: #090909;
+  --text-secondary: #fcf9f9;
+  --text-link: #0071e3;
+  --bg: #fcf9f9;
+  --bg-secondary: #1a1f3a;
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
@@ -25,11 +25,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #090909;
-    --text-white: #fcf9f9;
-    --text-h1: #fcf9f9;
-    --text-h2: #090909;
+    --text-primary: #fcf9f9;
+    --text-secondary: #090909;
+    --text-link: #fcf9f9;
     --bg: #1a1f3a;
+    --bg-secondary: #fcf9f9;
   }
 }
 
@@ -56,7 +56,7 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  color: var(--text-h1);
+  color: var(--text-black);
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
@@ -67,7 +67,7 @@ h2 {
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  color: var(--text-h2);
+  color: var(--text-black);
   @media (max-width: 1024px) {
     font-size: 20px;
   }

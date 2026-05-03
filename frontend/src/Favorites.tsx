@@ -27,20 +27,21 @@ export const Favorites = () => {
   );
 
   if (isFavoritesLoading || isJobsLoading) {
-    return <div>Loading favorites...</div>;
+    return <div className="text">Loading favorites...</div>;
   }
 
   if (isFavoritesError || isJobsError) {
-    return <div>Could not load favorites. Please try again.</div>;
+    return (
+      <div className="text">Could not load favorites. Please try again.</div>
+    );
   }
 
   if (favoritesList.length === 0) {
-    return <div>There are no favorites yet</div>;
+    return <div className="text">There are no favorites yet.</div>;
   }
 
   return (
-    <div>
-      <h2>Favorites</h2>
+    <div className="favorites">
       <div className="favorites-list">
         <ul>
           {(favoriteJobAds || []).map((job) => (

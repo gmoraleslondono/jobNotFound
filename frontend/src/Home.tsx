@@ -2,6 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { JobAdCard } from "./JobAdCard";
 import { useToggleFavorite } from "./useToggleFavorite";
 import { trpcClient } from "./trpc";
+import "./Home.css";
 
 const PAGE_SIZE = 20;
 
@@ -36,11 +37,11 @@ export const Home = () => {
   const jobAds = data?.pages.flatMap((page) => page.hits) || [];
 
   return (
-    <div className="home app-content">
+    <div className="home">
       {isLoading ? (
-        <p>Loading jobs...</p>
+        <p className="text">Loading jobs...</p>
       ) : isError ? (
-        <p>Could not load jobs. Please try again.</p>
+        <p className="text">Could not load jobs. Please try again.</p>
       ) : (
         <>
           <ul>
@@ -56,6 +57,7 @@ export const Home = () => {
             <button
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
+              className="load-more-button"
             >
               {isFetchingNextPage ? "Loading more..." : "Load more jobs"}
             </button>

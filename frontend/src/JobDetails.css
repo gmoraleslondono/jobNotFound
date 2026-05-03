@@ -1,9 +1,8 @@
 .content {
-  color: white;
+  color: var(--text-primary);
 }
 
 .headline {
-  color: white;
   font-size: 40px;
   font-weight: 600;
 }
@@ -20,7 +19,28 @@
   text-align: justify;
 }
 
-.actions {
-  flex-direction: row;
+.apply-link-container {
+  margin: 20px 0;
+  line-height: 1.6;
+}
+
+.apply-link {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.apply-link:hover {
+  text-decoration: underline;
+}
+
+.action-container {
+  display: flex;
   align-items: flex-start;
+  gap: 20px;
+
+  /* mobile */
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 }

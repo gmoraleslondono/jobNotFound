@@ -22,29 +22,27 @@ export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {
 
   return (
     <li className="job-card">
-      <div>
-        <div className="header">
-          <span
-            onClick={() => onToggleFavorite(job.id)}
-            className={`${isFavorite ? "favorite-icon" : "not-favorite-icon"} icon`}
-            aria-label="Toggle favorite"
-          >
-            <img
-              src={
-                isFavorite ? "/icons/heart-favorite.svg" : "/icons/heart.svg"
-              }
-              alt={isFavorite ? "Favorite" : "Not favorite"}
-              width={20}
-              height={20}
-            />
-          </span>
+      <div className="card-header">
+        <span
+          onClick={() => onToggleFavorite(job.id)}
+          className={`${isFavorite ? "favorite-icon" : "not-favorite-icon"} icon`}
+          aria-label="Toggle favorite"
+        >
+          <img
+            src={isFavorite ? "/icons/heart-favorite.svg" : "/icons/heart.svg"}
+            alt={isFavorite ? "Favorite" : "Not favorite"}
+            width={20}
+            height={20}
+          />
+        </span>
 
-          <Link to={`/job/${job.id}`} className="job-link">
-            <h2 className="job-headline job-headline-clickable">
-              {job.headline}
-            </h2>
-          </Link>
-        </div>
+        <Link to={`/job/${job.id}`} className="job-link">
+          <h2 className="job-headline job-headline-clickable">
+            {job.headline}
+          </h2>
+        </Link>
+      </div>
+      <div className="card-content">
         <div>
           <p className="card-content">Company: {job.employer?.name}</p>
           <p className="card-content">
@@ -58,8 +56,10 @@ export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {
             {job.status && <span className="status-label">{job.status}</span>}
           </div>
         </div>
+        <div className="card-actions">
+          <ActionButtons jobId={job.id || ""} />
+        </div>
       </div>
-      <ActionButtons jobId={job.id || ""} />
     </li>
   );
 };

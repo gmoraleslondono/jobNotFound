@@ -11,7 +11,7 @@ export function ActionButtons({ jobId }: { jobId: string }) {
   } = useJobActions(jobId);
 
   return (
-    <div className="actions">
+    <>
       {!status && (
         <button
           className="bt-action bt-apply"
@@ -47,6 +47,6 @@ export function ActionButtons({ jobId }: { jobId: string }) {
           Declined
         </button>
       )}
-    </div>
+    </>
   );
 }
