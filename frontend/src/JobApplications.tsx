@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useTRPC } from "./trpc";
 import { JobAdCard } from "./JobAdCard";
 import { useToggleFavorite } from "./useToggleFavorite";
@@ -7,23 +7,26 @@ export const JobApplications = () => {
   const trpc = useTRPC();
   const { handleToggleFavorite } = useToggleFavorite();
   const {
-    data: jobApplications,
+    data: applications,
     isLoading: isApplicationsLoading,
     isError: isApplicationsError,
   } = useQuery(trpc.getJobApplications.queryOptions());
-  const {
-    data: jobAds,
-    isLoading: isJobsLoading,
-    isError: isJobsError,
-  } = useQuery({
-    ...trpc.getJobs.queryOptions(),
-    enabled: Boolean(jobApplications?.length),
+
+  const applicationsList = applications ?? [];
+
+  const applicationJobQueries = useQueries({
+    queries: applicationsList.map((application) => ({
+      ...trpc.getJob.queryOptions(application.id),
+      enabled: applicationsList.length > 0,
+    })),
   });
 
-  const applicationIds = new Set((jobApplications || []).map((job) => job.id));
-  const appliedJobAds = (jobAds?.hits || []).filter((job) =>
-    applicationIds.has(job.id)
-  );
+  const appliedJobAds = applicationJobQueries
+    .map((q) => q.data)
+    .filter((job): job is NonNullable<typeof job> => job != null);
+
+  const isJobsLoading = applicationJobQueries.some((q) => q.isLoading);
+  const isJobsError = applicationJobQueries.some((q) => q.isError);
 
   if (isApplicationsLoading || isJobsLoading) {
     return <div className="text">Loading applications...</div>;
@@ -35,7 +38,7 @@ export const JobApplications = () => {
     );
   }
 
-  if (applicationIds.size === 0) {
+  if (applicationsList.length === 0) {
     return <div className="text">There are no applications yet.</div>;
   }
 

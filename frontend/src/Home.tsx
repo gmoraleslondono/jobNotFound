@@ -1,52 +1,85 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { JobAdCard } from "./JobAdCard";
-import {
-  HOME_INFINITE_JOBS_QUERY_KEY,
-  useToggleFavorite,
-} from "./useToggleFavorite";
+import { useToggleFavorite } from "./useToggleFavorite";
 import { trpcClient } from "./trpc";
 import "./Home.css";
 
-const PAGE_SIZE = 20;
+const ROLE_FILTERS = [
+  { id: "all", label: "All roles" },
+  { id: "frontend", label: "Frontend" },
+  { id: "backend", label: "Backend" },
+  { id: "fullstack", label: "Fullstack" },
+] as const;
+
+type RoleFilterId = (typeof ROLE_FILTERS)[number]["id"];
+
+const JOB_LIST_LIMIT = 100;
 
 export const Home = () => {
   const { handleToggleFavorite } = useToggleFavorite();
+  const [filterId, setFilterId] = useState<RoleFilterId>("all");
 
-  const {
-    data,
-    isLoading,
-    isError,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: HOME_INFINITE_JOBS_QUERY_KEY,
-    initialPageParam: 0,
-    queryFn: async ({ pageParam }) => {
-      return trpcClient.getJobs.query({
-        offset: pageParam,
-        limit: PAGE_SIZE,
-      });
-    },
-    getNextPageParam: (lastPage, allPages) => {
-      const fetchedCount = allPages.reduce(
-        (count, page) => count + page.hits.length,
-        0
-      );
-      return fetchedCount < lastPage.total.value ? fetchedCount : undefined;
-    },
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["jobs", filterId],
+    queryFn: () =>
+      trpcClient.getJobs.query({
+        offset: 0,
+        limit: JOB_LIST_LIMIT,
+        ...(filterId === "all" ? {} : { q: filterId }),
+      }),
   });
 
-  const jobAds = data?.pages.flatMap((page) => page.hits) || [];
+  const jobAds = data?.hits ?? [];
+
+  const totalMatches = data?.total.value ?? 0;
+  const activeFilterLabel =
+    ROLE_FILTERS.find((f) => f.id === filterId)?.label ?? filterId;
 
   return (
     <div className="home">
+      <div className="job-filter-bar" role="group" aria-label="Job role filter">
+        {ROLE_FILTERS.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            className={
+              f.id === filterId
+                ? "job-filter-button job-filter-button--active"
+                : "job-filter-button"
+            }
+            aria-pressed={f.id === filterId}
+            onClick={() => setFilterId(f.id)}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
       {isLoading ? (
         <p className="text">Loading jobs...</p>
       ) : isError ? (
         <p className="text">Could not load jobs. Please try again.</p>
       ) : (
         <>
+          <div>
+            <p>
+              Showing <b>{jobAds.length}</b>
+              {totalMatches > jobAds.length ? (
+                <>
+                  {" "}
+                  of <b>{totalMatches}</b>
+                </>
+              ) : null}{" "}
+              developer-related jobs in Stockholm
+              {filterId !== "all" ? (
+                <>
+                  {" "}
+                  for <b>{activeFilterLabel}</b>
+                </>
+              ) : null}
+              <span>.</span>
+            </p>
+          </div>
           <ul>
             {jobAds.map((job) => (
               <JobAdCard
@@ -56,15 +89,6 @@ export const Home = () => {
               />
             ))}
           </ul>
-          {hasNextPage && (
-            <button
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-              className="load-more-button"
-            >
-              {isFetchingNextPage ? "Loading more..." : "Load more jobs"}
-            </button>
-          )}
         </>
       )}
     </div>

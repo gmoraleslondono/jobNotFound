@@ -13,6 +13,20 @@ const searchResponseWithStatusSchema = searchResponseSchema.extend({
 
 const JOB_SEARCH_BASE_API = "https://jobsearch.api.jobtechdev.se";
 
+const DEFAULT_JOB_SEARCH_KEYWORDS = [
+  "frontend",
+  "backend",
+  "fullstack",
+  "developer",
+  "programmerare",
+  "mjukvaruutvecklare",
+  "systemutvecklare",
+  "programvaruutvecklare",
+  "mjukvaruingenjör",
+] as const;
+
+const DEFAULT_JOB_SEARCH_Q = DEFAULT_JOB_SEARCH_KEYWORDS.join(" ");
+
 export const appRouter = router({
   getJobs: publicProcedure
     .input(
@@ -20,6 +34,7 @@ export const appRouter = router({
         .object({
           offset: z.number().int().min(0).default(0),
           limit: z.number().int().min(1).max(100).default(20),
+          q: z.string().min(1).optional(),
         })
         .optional()
     )
@@ -27,15 +42,28 @@ export const appRouter = router({
       try {
         const offset = input?.offset ?? 0;
         const limit = input?.limit ?? 20;
+        const q = input?.q?.trim() || DEFAULT_JOB_SEARCH_Q;
+        const useDefaultMultiRoleQuery = !input?.q?.trim();
         const queryParams = new URLSearchParams({
           municipality: "AvNB_uwa_6n6",
-          q: "frontend",
+          q,
           offset: offset.toString(),
           limit: limit.toString(),
+          /** Newest published ads first (API default is relevance). */
+          sort: "pubdate-desc",
         });
 
         const response = await fetch(
-          `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`
+          `${JOB_SEARCH_BASE_API}/search?${queryParams.toString()}`,
+          {
+            headers: {
+              accept: "application/json",
+              "x-feature-freetext-bool-method": "or",
+              ...(useDefaultMultiRoleQuery
+                ? { "x-feature-disable-smart-freetext": "true" }
+                : {}),
+            },
+          }
         );
 
         if (!response.ok) {

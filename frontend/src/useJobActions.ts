@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { HOME_INFINITE_JOBS_QUERY_KEY } from "./useToggleFavorite";
+import { JOBS_QUERY_PREFIX } from "./useToggleFavorite";
 import { useTRPC } from "./trpc";
 
 export function useJobActions(jobId: string) {
@@ -15,7 +15,7 @@ export function useJobActions(jobId: string) {
     queryClient.invalidateQueries(trpc.getAppliedStatusById.queryFilter(jobId));
     queryClient.invalidateQueries(trpc.getJob.queryFilter(jobId));
     queryClient.invalidateQueries(trpc.getJobs.queryOptions());
-    queryClient.invalidateQueries({ queryKey: [...HOME_INFINITE_JOBS_QUERY_KEY] });
+    queryClient.invalidateQueries({ queryKey: [...JOBS_QUERY_PREFIX] });
     queryClient.invalidateQueries(trpc.getJobApplications.queryOptions());
   };
 
