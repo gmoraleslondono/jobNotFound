@@ -23,18 +23,18 @@
   display: flex;
   flex-direction: row;
   gap: 12px;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
+}
+
+.card-information {
+  margin-top: 30px;
 }
 
 .job-link {
   color: var(--text-primary);
   text-decoration: none;
   transition: color 0.2s ease;
-}
-
-.job-headline {
-  margin-bottom: 10px;
 }
 
 .job-headline-clickable {
@@ -61,12 +61,7 @@
   transition: transform 0.2s ease;
 }
 
-.labels {
-  margin-top: 5px;
-}
-
 .status-label {
-  margin-top: 10px;
   font-size: 12px;
   border-radius: 20px;
   border: 1px solid black;
@@ -75,7 +70,6 @@
 }
 
 .card-actions {
-  /* width: 50%; */
   display: flex;
   flex-direction: column;
   align-items: flex-end;

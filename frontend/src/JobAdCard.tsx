@@ -41,20 +41,20 @@ export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {
             {job.headline}
           </h2>
         </Link>
+        <div className="labels">
+          {job.status && <span className="status-label">{job.status}</span>}
+        </div>
       </div>
       <div className="card-content">
-        <div>
-          <p className="card-content">Company: {job.employer?.name}</p>
-          <p className="card-content">
+        <div className="card-information">
+          <p className="card-info">Company: {job.employer?.name}</p>
+          <p className="card-info">
             Type of contract: {job.duration?.label} -{" "}
             {job.working_hours_type?.label}
           </p>
-          <p className="card-content">
+          <p className="card-info">
             Last application date: {formatDate(job.application_deadline || "")}
           </p>
-          <div className="labels">
-            {job.status && <span className="status-label">{job.status}</span>}
-          </div>
         </div>
         <div className="card-actions">
           <ActionButtons jobId={job.id || ""} />
