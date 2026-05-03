@@ -1,7 +1,7 @@
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import z from "zod";
-import type { jobStatusSchema } from "./arbetsförmedlingensSchemas";
+import { jobStatusSchema } from "./schemas.ts";
 
 type JobStatus = z.infer<typeof jobStatusSchema>;
 

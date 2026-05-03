@@ -8,9 +8,9 @@ type JobAdCardProps = {
     id: string;
     isFavorite?: boolean;
     headline?: string | null;
-    employer?: { name?: string };
-    duration?: { label?: string };
-    working_hours_type?: { label?: string };
+    employer?: { name?: string | null } | null;
+    duration?: { label?: string | null } | null;
+    working_hours_type?: { label?: string | null } | null;
     application_deadline?: string | null;
     status?: string | null;
   };

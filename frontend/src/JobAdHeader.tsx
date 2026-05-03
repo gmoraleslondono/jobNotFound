@@ -3,7 +3,7 @@ import "./JobAdHeader.css";
 
 export type JobAdHeaderProps = {
   jobId: string;
-  headline?: string;
+  headline?: string | null;
   status?: string | null;
   isFavorite: boolean;
   onToggleFavorite: (id: string) => void;
