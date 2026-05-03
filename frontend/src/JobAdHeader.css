@@ -1,0 +1,41 @@
+.job-ad-header {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+
+  h2 {
+    font-size: 30px;
+  }
+}
+
+.job-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.job-headline-clickable {
+  cursor: pointer;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.job-headline-clickable:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.icon {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.status-label {
+  font-size: 12px;
+  border-radius: 20px;
+  border: 1px solid black;
+  padding: 2px 8px;
+  text-transform: capitalize;
+}

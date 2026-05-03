@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
 import { formatDate } from "./dateUtils";
 import { ActionButtons } from "./ActionButtons";
+import { JobAdHeader } from "./JobAdHeader";
 import "./JobAdCard.css";
 
 type JobAdCardProps = {
@@ -22,29 +22,13 @@ export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {
 
   return (
     <li className="job-card">
-      <div className="card-header">
-        <span
-          onClick={() => onToggleFavorite(job.id)}
-          className={`${isFavorite ? "favorite-icon" : "not-favorite-icon"} icon`}
-          aria-label="Toggle favorite"
-        >
-          <img
-            src={isFavorite ? "/icons/heart-favorite.svg" : "/icons/heart.svg"}
-            alt={isFavorite ? "Favorite" : "Not favorite"}
-            width={20}
-            height={20}
-          />
-        </span>
-
-        <Link to={`/job/${job.id}`} className="job-link">
-          <h2 className="job-headline job-headline-clickable">
-            {job.headline}
-          </h2>
-        </Link>
-        <div className="labels">
-          {job.status && <span className="status-label">{job.status}</span>}
-        </div>
-      </div>
+      <JobAdHeader
+        jobId={job.id}
+        headline={job.headline}
+        status={job.status}
+        isFavorite={isFavorite}
+        onToggleFavorite={onToggleFavorite}
+      />
       <div className="card-content">
         <div className="card-information">
           <p className="card-info">Company: {job.employer?.name}</p>

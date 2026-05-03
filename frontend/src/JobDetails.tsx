@@ -4,6 +4,7 @@ import { formatDate } from "./dateUtils";
 import "./JobDetails.css";
 import { useParams } from "react-router-dom";
 import { ActionButtons } from "./ActionButtons";
+import { JobAdHeader } from "./JobAdHeader";
 
 export const JobDetails = () => {
   const { jobId } = useParams();
@@ -34,13 +35,13 @@ export const JobDetails = () => {
     <div className="job-details">
       <div className="content">
         <div>
-          <span
-            onClick={handleFavoriteClick}
-            className={isFavorite ? "favorite-icon" : "not-favorite-icon"}
-          >
-            {isFavorite ? "★" : "☆"}
-          </span>
-          <h2 className="headline">{jobAd?.headline}</h2>
+          <JobAdHeader
+            jobId={jobAd?.id}
+            headline={jobAd?.headline}
+            status={jobAd?.status}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleFavoriteClick}
+          />
         </div>
         <div className="info">
           <p className="relevant-info">Company: {jobAd?.employer?.name}</p>
