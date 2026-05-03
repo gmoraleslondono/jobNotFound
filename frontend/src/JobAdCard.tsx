@@ -7,7 +7,7 @@ type JobAdCardProps = {
   job: {
     id: string;
     isFavorite?: boolean;
-    headline?: string;
+    headline?: string | null;
     employer?: { name?: string };
     duration?: { label?: string };
     working_hours_type?: { label?: string };
