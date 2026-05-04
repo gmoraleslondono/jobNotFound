@@ -6,16 +6,15 @@ A full-stack demo app for browsing **Swedish job ads** from the public [JobTech 
 
 | Area                               | Behavior                                                                                                                                                         |
 | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Home (`/`)**                     | Loads a single batch of jobs (see limits below). Role chips narrow the search keyword; there is **no free-text search** and **no “load more” or page controls**. |
-| **Job (`/job/:id`)**               | Fetches one ad by ID, shows employer and dates, favorite + application actions.                                                                                  |
+| **Home (`/`)**                     | Loads a single batch of jobs (see limits below). Role chips narrow the search keyword; there is **no free-text search** |
+| **Job (`/job/:id`)**               | Fetches one job ad by ID, shows employer and dates, favorite + application actions.                                                                                  |
 | **Favorites (`/favorites`)**       | Lists saved jobs by re-fetching each ad from the API.                                                                                                            |
-| **Applications (`/applications`)** | Lists jobs you marked with an application status.                                                                                                                |
+| **Applications (`/applications`)** | Lists jobs marked with an application status.                                                                                                                |
 
 ### Listing limits (important)
 
 - The backend `getJobs` procedure accepts `offset` and `limit` (for callers such as tests or future UI).
 - The **web UI always requests `offset: 0`** and loads **up to 100** hits per selected filter.
-- If the API reports **more matches than that**, the home screen shows text like “Showing **100** of **N** …” — those extra matches are **not** reachable in the UI until pagination or a higher limit is implemented.
 
 ## Repository layout
 
