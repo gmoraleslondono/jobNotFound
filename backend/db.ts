@@ -5,7 +5,11 @@ import { JSONFile } from "lowdb/node";
 import z from "zod";
 import { jobStatusSchema } from "./schemas.ts";
 
-const dbFilePath = join(dirname(fileURLToPath(import.meta.url)), "data", "db.json");
+const dbFilePath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "data",
+  "db.json"
+);
 
 type JobStatus = z.infer<typeof jobStatusSchema>;
 
