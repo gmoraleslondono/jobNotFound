@@ -6,7 +6,10 @@ import cors from "cors";
 import sirv from "sirv";
 import { appRouter } from "./appRouter.ts";
 
-const dist = resolve(fileURLToPath(new URL(".", import.meta.url)), "../frontend/dist");
+const dist = resolve(
+  fileURLToPath(new URL(".", import.meta.url)),
+  "../frontend/dist"
+);
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST ?? "0.0.0.0";
 
@@ -19,8 +22,7 @@ const trpc = createHTTPHandler({
   basePath: "/trpc/",
   router: appRouter,
   middleware: cors({
-    origin:
-      corsOrigins.length === 1 ? corsOrigins[0]! : corsOrigins,
+    origin: corsOrigins.length === 1 ? corsOrigins[0]! : corsOrigins,
     credentials: true,
   }),
 });
