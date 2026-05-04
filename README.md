@@ -4,12 +4,12 @@ A full-stack demo app for browsing **Swedish job ads** from the public [JobTech 
 
 ## What the app does
 
-| Area                               | Behavior                                                                                                                                                         |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Area                               | Behavior                                                                                                                |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **Home (`/`)**                     | Loads a single batch of jobs (see limits below). Role chips narrow the search keyword; there is **no free-text search** |
-| **Job (`/job/:id`)**               | Fetches one job ad by ID, shows employer and dates, favorite + application actions.                                                                                  |
-| **Favorites (`/favorites`)**       | Lists saved jobs by re-fetching each ad from the API.                                                                                                            |
-| **Applications (`/applications`)** | Lists jobs marked with an application status.                                                                                                                |
+| **Job (`/job/:id`)**               | Fetches one job ad by ID, shows employer and dates, favorite + application actions.                                     |
+| **Favorites (`/favorites`)**       | Lists saved jobs by re-fetching each ad from the API.                                                                   |
+| **Applications (`/applications`)** | Lists jobs marked with an application status.                                                                           |
 
 ### Listing limits (important)
 
@@ -24,12 +24,12 @@ A full-stack demo app for browsing **Swedish job ads** from the public [JobTech 
 
 ## Technologies
 
-| Layer            | Stack                                                                                         |
-| ---------------- | --------------------------------------------------------------------------------------------- |
-| **Frontend**     | React, Vite, TypeScript, React Router, [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC client]((https://trpc.io/docs/))                            |
-| **Backend**      | Node.js (ES modules), [tRPC standalone adapter](https://trpc.io/docs/), [Zod](https://zod.dev/), [lowdb](https://github.com/typicode/lowdb), CORS                               |
-| **External API** | [JobTech Job Search API](https://jobsearch.api.jobtechdev.se) (`jobsearch.api.jobtechdev.se`) |
-| **Tooling**      | Prettier (root + packages), ESLint (frontend)                                                 |
+| Layer            | Stack                                                                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Frontend**     | React, Vite, TypeScript, React Router, [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC client](<(https://trpc.io/docs/)>) |
+| **Backend**      | Node.js (ES modules), [tRPC standalone adapter](https://trpc.io/docs/), [Zod](https://zod.dev/), [lowdb](https://github.com/typicode/lowdb), CORS                  |
+| **External API** | [JobTech Job Search API](https://jobsearch.api.jobtechdev.se) (`jobsearch.api.jobtechdev.se`)                                                                      |
+| **Tooling**      | Prettier (root + packages), ESLint (frontend)                                                                                                                      |
 
 ## Prerequisites
 
