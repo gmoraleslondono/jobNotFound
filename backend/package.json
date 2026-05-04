@@ -21,11 +21,12 @@
     "@trpc/server": "^11.16.0",
     "cors": "^2.8.6",
     "lowdb": "^7.0.1",
+    "sirv": "^3.0.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^24.12.2",
     "@types/cors": "^2.8.19",
+    "@types/node": "^24.12.2",
     "nodemon": "^3.1.14",
     "prettier": "^3.5.3"
   }

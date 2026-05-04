@@ -5,8 +5,12 @@ import { createTRPCContext } from "@trpc/tanstack-react-query";
 
 export const queryClient = new QueryClient();
 
-const apiUrl =
-  import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
+const apiBase = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+const apiUrl = apiBase
+  ? `${apiBase}/trpc`
+  : import.meta.env.DEV
+    ? "http://localhost:3000/trpc"
+    : "/trpc";
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
