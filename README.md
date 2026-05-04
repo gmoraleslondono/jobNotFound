@@ -27,8 +27,8 @@ A full-stack demo app for browsing **Swedish job ads** from the public [JobTech 
 
 | Layer            | Stack                                                                                         |
 | ---------------- | --------------------------------------------------------------------------------------------- |
-| **Frontend**     | React, Vite, TypeScript, React Router, TanStack Query, tRPC client                            |
-| **Backend**      | Node.js (ES modules), tRPC standalone adapter, Zod, lowdb, CORS                               |
+| **Frontend**     | React, Vite, TypeScript, React Router, [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview), [tRPC client]((https://trpc.io/docs/))                            |
+| **Backend**      | Node.js (ES modules), [tRPC standalone adapter](https://trpc.io/docs/), [Zod](https://zod.dev/), [lowdb](https://github.com/typicode/lowdb), CORS                               |
 | **External API** | [JobTech Job Search API](https://jobsearch.api.jobtechdev.se) (`jobsearch.api.jobtechdev.se`) |
 | **Tooling**      | Prettier (root + packages), ESLint (frontend)                                                 |
 
