@@ -23,16 +23,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text-primary: #fcf9f9;
-    --text-secondary: #090909;
-    --text-link: #fcf9f9;
-    --bg: #1a1f3a;
-    --bg-secondary: #fcf9f9;
-  }
-}
-
 #root {
   max-width: 100%;
   margin: 0 auto;
