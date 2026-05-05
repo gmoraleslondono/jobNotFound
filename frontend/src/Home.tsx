@@ -14,8 +14,6 @@ const ROLE_FILTERS = [
 
 type RoleFilterId = (typeof ROLE_FILTERS)[number]["id"];
 
-const JOB_LIST_LIMIT = 100;
-
 export const Home = () => {
   const { handleToggleFavorite } = useToggleFavorite();
   const [filterId, setFilterId] = useState<RoleFilterId>("all");
@@ -23,11 +21,9 @@ export const Home = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["jobs", filterId],
     queryFn: () =>
-      trpcClient.getJobs.query({
-        offset: 0,
-        limit: JOB_LIST_LIMIT,
-        ...(filterId === "all" ? {} : { q: filterId }),
-      }),
+      trpcClient.getJobs.query(
+        filterId === "all" ? undefined : { q: filterId }
+      ),
   });
 
   const jobAds = data?.hits ?? [];

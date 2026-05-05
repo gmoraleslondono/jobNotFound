@@ -32,25 +32,20 @@ export const appRouter = router({
     .input(
       z
         .object({
-          offset: z.number().int().min(0).default(0),
-          limit: z.number().int().min(1).max(100).default(20),
           q: z.string().min(1).optional(),
         })
         .optional()
     )
     .query(async ({ input }) => {
       try {
-        const offset = input?.offset ?? 0;
-        const limit = input?.limit ?? 20;
         const q = input?.q?.trim() || DEFAULT_JOB_SEARCH_Q;
         const useDefaultMultiRoleQuery = !input?.q?.trim();
         const queryParams = new URLSearchParams({
-          municipality: "AvNB_uwa_6n6",
+          municipality: "AvNB_uwa_6n6" /* Stockholm */,
           q,
-          offset: offset.toString(),
-          limit: limit.toString(),
-          /** Newest published ads first (API default is relevance). */
-          sort: "pubdate-desc",
+          offset: "0",
+          limit: "100",
+          sort: "pubdate-desc" /* Newest published ads first */,
         });
 
         const response = await fetch(
