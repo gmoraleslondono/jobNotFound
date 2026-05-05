@@ -11,6 +11,21 @@ type JobDetail = RouterOutputs["getJob"];
 
 export const JOBS_QUERY_PREFIX = ["jobs"] as const;
 
+const toggleFavoriteInJobs = (jobs: JobsResponse, id: string): JobsResponse => ({
+  ...jobs,
+  hits: jobs.hits.map((job) =>
+    job.id === id ? { ...job, isFavorite: !job.isFavorite } : job
+  ),
+});
+
+const toggleFavoriteInJobDetail = (
+  job: JobDetail | undefined,
+  id: string
+): JobDetail | undefined => {
+  if (!job || job.id !== id) return job;
+  return { ...job, isFavorite: !job.isFavorite };
+};
+
 export function useToggleFavorite() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -19,20 +34,13 @@ export function useToggleFavorite() {
     trpc.toggleFavorite.mutationOptions({
       onMutate: (variables: ToggleFavoriteInput) => {
         if (!variables) return;
-
-        const flipFavorite = (job: JobsResponse["hits"][number]) =>
-          job.id === variables.id
-            ? { ...job, isFavorite: !job.isFavorite }
-            : job;
+        const { id } = variables;
 
         queryClient.setQueryData(
           trpc.getJobs.queryOptions().queryKey,
           (old: JobsResponse | undefined) => {
             if (!old) return old;
-            return {
-              ...old,
-              hits: old.hits.map(flipFavorite),
-            };
+            return toggleFavoriteInJobs(old, id);
           }
         );
 
@@ -40,34 +48,23 @@ export function useToggleFavorite() {
           { queryKey: [...JOBS_QUERY_PREFIX] },
           (old: JobsResponse | undefined) => {
             if (!old) return old;
-            return {
-              ...old,
-              hits: old.hits.map(flipFavorite),
-            };
+            return toggleFavoriteInJobs(old, id);
           }
         );
 
         queryClient.setQueryData(
-          trpc.getJob.queryOptions(variables.id).queryKey,
-          (old: JobDetail | undefined) => {
-            if (!old || old.id !== variables.id) return old;
-            return { ...old, isFavorite: !old.isFavorite };
-          }
+          trpc.getJob.queryOptions(id).queryKey,
+          (old: JobDetail | undefined) => toggleFavoriteInJobDetail(old, id)
         );
       },
       onSuccess: (_data, variables) => {
+        if (!variables) return;
         queryClient.invalidateQueries(trpc.getJobs.queryOptions());
         queryClient.invalidateQueries({ queryKey: [...JOBS_QUERY_PREFIX] });
         queryClient.invalidateQueries(trpc.getFavorites.queryOptions());
         queryClient.invalidateQueries(trpc.getJobApplications.queryOptions());
         queryClient.invalidateQueries(trpc.getIsFavoriteById.queryFilter());
-        const jobId =
-          variables && typeof variables === "object" && "id" in variables
-            ? variables.id
-            : undefined;
-        if (jobId) {
-          queryClient.invalidateQueries(trpc.getJob.queryFilter(jobId));
-        }
+        queryClient.invalidateQueries(trpc.getJob.queryFilter(variables.id));
       },
     })
   );
