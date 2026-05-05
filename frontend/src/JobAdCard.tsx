@@ -14,7 +14,7 @@ type JobAdCardProps = {
     application_deadline?: string | null;
     status?: string | null;
   };
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: (job: { id: string; isFavorite: boolean }) => void;
 };
 
 export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {

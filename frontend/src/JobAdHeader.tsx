@@ -6,7 +6,7 @@ export type JobAdHeaderProps = {
   headline?: string | null;
   status?: string | null;
   isFavorite: boolean;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: (job: { id: string; isFavorite: boolean }) => void;
 };
 
 export const JobAdHeader = ({
@@ -19,7 +19,7 @@ export const JobAdHeader = ({
   return (
     <div className="job-ad-header">
       <span
-        onClick={() => onToggleFavorite(jobId)}
+        onClick={() => onToggleFavorite({ id: jobId, isFavorite })}
         className={`${isFavorite ? "favorite-icon" : "not-favorite-icon"} icon`}
         aria-label="Toggle favorite"
       >

@@ -151,32 +151,35 @@ export const appRouter = router({
       }
     }),
 
-  getIsFavoriteById: publicProcedure
-    .input(z.string())
-    .query(async ({ input: id }) => {
-      try {
-        await db.read();
-        const isFavorite = db.data?.favorites?.some((f) => f.id === id);
-        return isFavorite;
-      } catch {
-        return false;
-      }
-    }),
-
-  toggleFavorite: publicProcedure
+  addToFavorites: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       try {
         await db.read();
-        const index = db.data?.favorites?.findIndex((f) => f.id === input.id);
-        if (index !== undefined) {
-          if (index >= 0) {
-            db.data?.favorites?.splice(index, 1);
-          } else {
-            db.data?.favorites?.push({ id: input.id });
-          }
-          await db.write();
+        const favorites = db.data?.favorites ?? [];
+        const alreadyFavorite = favorites.some((f) => f.id === input.id);
+
+        if (!alreadyFavorite) {
+          favorites.push({ id: input.id });
         }
+
+        if (db.data) db.data.favorites = favorites;
+        await db.write();
+      } catch {
+        // ignore
+      }
+    }),
+
+  removeFromFavorites: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await db.read();
+        const favorites = db.data?.favorites ?? [];
+        const nextFavorites = favorites.filter((f) => f.id !== input.id);
+
+        if (db.data) db.data.favorites = nextFavorites;
+        await db.write();
       } catch {
         // ignore
       }

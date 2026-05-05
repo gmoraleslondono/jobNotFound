@@ -15,10 +15,6 @@ export const JobDetails = () => {
 
   const { data: jobAd } = useQuery(trpc.getJob.queryOptions(jobId || ""));
 
-  const { data: isFavorite } = useQuery(
-    trpc.getIsFavoriteById.queryOptions(jobId || "")
-  );
-
   return (
     <div className="job-details">
       <div className="content">
@@ -27,7 +23,7 @@ export const JobDetails = () => {
             jobId={jobAd?.id ?? jobId ?? ""}
             headline={jobAd?.headline}
             status={jobAd?.status}
-            isFavorite={Boolean(isFavorite)}
+            isFavorite={Boolean(jobAd?.isFavorite)}
             onToggleFavorite={handleToggleFavorite}
           />
         </div>

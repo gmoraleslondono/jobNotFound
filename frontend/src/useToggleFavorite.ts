@@ -1,75 +1,82 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "../../backend/appRouter";
 import { useTRPC } from "./trpc";
 
-type RouterInputs = inferRouterInputs<AppRouter>;
 type RouterOutputs = inferRouterOutputs<AppRouter>;
-type ToggleFavoriteInput = RouterInputs["toggleFavorite"];
-type JobsResponse = RouterOutputs["getJobs"];
 type JobDetail = RouterOutputs["getJob"];
-
+type JobsResponse = RouterOutputs["getJobs"];
 export const JOBS_QUERY_PREFIX = ["jobs"] as const;
-
-const toggleFavoriteInJobs = (jobs: JobsResponse, id: string): JobsResponse => ({
-  ...jobs,
-  hits: jobs.hits.map((job) =>
-    job.id === id ? { ...job, isFavorite: !job.isFavorite } : job
-  ),
-});
-
-const toggleFavoriteInJobDetail = (
-  job: JobDetail | undefined,
-  id: string
-): JobDetail | undefined => {
-  if (!job || job.id !== id) return job;
-  return { ...job, isFavorite: !job.isFavorite };
-};
 
 export function useToggleFavorite() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const toggleFavorite = useMutation(
-    trpc.toggleFavorite.mutationOptions({
-      onMutate: (variables: ToggleFavoriteInput) => {
+  const applyOptimisticFavorite = (id: string, isFavorite: boolean) => {
+    queryClient.setQueriesData(
+      { queryKey: [...JOBS_QUERY_PREFIX] },
+      (old: JobsResponse | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          hits: old.hits.map((job) =>
+            job.id === id ? { ...job, isFavorite } : job
+          ),
+        };
+      }
+    );
+
+    queryClient.setQueryData(
+      trpc.getJob.queryOptions(id).queryKey,
+      (old: JobDetail | undefined) => {
+        if (!old || old.id !== id) return old;
+        return { ...old, isFavorite };
+      }
+    );
+  };
+
+  const invalidateFavoriteQueries = (id: string) => {
+    queryClient.invalidateQueries({ queryKey: [...JOBS_QUERY_PREFIX] });
+    queryClient.invalidateQueries(trpc.getFavorites.queryOptions());
+    queryClient.invalidateQueries(trpc.getJob.queryOptions(id));
+  };
+
+  const addToFavorites = useMutation(
+    trpc.addToFavorites.mutationOptions({
+      onMutate: (variables) => {
         if (!variables) return;
-        const { id } = variables;
-
-        queryClient.setQueryData(
-          trpc.getJobs.queryOptions().queryKey,
-          (old: JobsResponse | undefined) => {
-            if (!old) return old;
-            return toggleFavoriteInJobs(old, id);
-          }
-        );
-
-        queryClient.setQueriesData(
-          { queryKey: [...JOBS_QUERY_PREFIX] },
-          (old: JobsResponse | undefined) => {
-            if (!old) return old;
-            return toggleFavoriteInJobs(old, id);
-          }
-        );
-
-        queryClient.setQueryData(
-          trpc.getJob.queryOptions(id).queryKey,
-          (old: JobDetail | undefined) => toggleFavoriteInJobDetail(old, id)
-        );
+        applyOptimisticFavorite(variables.id, true);
       },
       onSuccess: (_data, variables) => {
         if (!variables) return;
-        queryClient.invalidateQueries(trpc.getJobs.queryOptions());
-        queryClient.invalidateQueries({ queryKey: [...JOBS_QUERY_PREFIX] });
-        queryClient.invalidateQueries(trpc.getFavorites.queryOptions());
-        queryClient.invalidateQueries(trpc.getJobApplications.queryOptions());
-        queryClient.invalidateQueries(trpc.getIsFavoriteById.queryFilter());
-        queryClient.invalidateQueries(trpc.getJob.queryFilter(variables.id));
+        invalidateFavoriteQueries(variables.id);
       },
     })
   );
 
-  const handleToggleFavorite = (id: string) => toggleFavorite.mutate({ id });
+  const removeFromFavorites = useMutation(
+    trpc.removeFromFavorites.mutationOptions({
+      onMutate: (variables) => {
+        if (!variables) return;
+        applyOptimisticFavorite(variables.id, false);
+      },
+      onSuccess: (_data, variables) => {
+        if (!variables) return;
+        invalidateFavoriteQueries(variables.id);
+      },
+    })
+  );
 
-  return { handleToggleFavorite, isTogglingFavorite: toggleFavorite.isPending };
+  const handleToggleFavorite = (job: Pick<JobDetail, "id" | "isFavorite">) => {
+    if (job.isFavorite) {
+      removeFromFavorites.mutate({ id: job.id });
+      return;
+    }
+    addToFavorites.mutate({ id: job.id });
+  };
+
+  return {
+    handleToggleFavorite,
+    isTogglingFavorite: addToFavorites.isPending || removeFromFavorites.isPending,
+  };
 }
