@@ -1,14 +1,24 @@
 import { useJobActions } from "./useJobActions";
 import "./ActionButtons.css";
 
-export function ActionButtons({ jobId }: { jobId: string }) {
+type ActionButtonsProps = {
+  jobId: string;
+  headline?: string | null;
+  employerName?: string | null;
+};
+
+export function ActionButtons({
+  jobId,
+  headline,
+  employerName,
+}: ActionButtonsProps) {
   const {
     status,
     handleApplyClick,
     handleInterviewingClick,
     handleAcceptOfferClick,
     handleDeclinedClick,
-  } = useJobActions(jobId);
+  } = useJobActions(jobId, headline, employerName);
 
   return (
     <>

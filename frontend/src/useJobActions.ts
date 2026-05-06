@@ -2,7 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { JOBS_QUERY_PREFIX } from "./useToggleFavorite";
 import { useTRPC } from "./trpc";
 
-export function useJobActions(jobId: string) {
+export function useJobActions(
+  jobId: string,
+  headline?: string | null,
+  employerName?: string | null
+) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
@@ -21,25 +25,45 @@ export function useJobActions(jobId: string) {
 
   const handleApplyClick = () =>
     addJobToApplied.mutate(
-      { id: jobId, status: "applied" },
+      {
+        id: jobId,
+        status: "applied",
+        headline: headline ?? undefined,
+        employerName: employerName ?? undefined,
+      },
       { onSuccess: invalidateStatus }
     );
 
   const handleInterviewingClick = () =>
     addJobToApplied.mutate(
-      { id: jobId, status: "interviewing" },
+      {
+        id: jobId,
+        status: "interviewing",
+        headline: headline ?? undefined,
+        employerName: employerName ?? undefined,
+      },
       { onSuccess: invalidateStatus }
     );
 
   const handleAcceptOfferClick = () =>
     addJobToApplied.mutate(
-      { id: jobId, status: "hired" },
+      {
+        id: jobId,
+        status: "hired",
+        headline: headline ?? undefined,
+        employerName: employerName ?? undefined,
+      },
       { onSuccess: invalidateStatus }
     );
 
   const handleDeclinedClick = () =>
     addJobToApplied.mutate(
-      { id: jobId, status: "declined" },
+      {
+        id: jobId,
+        status: "declined",
+        headline: headline ?? undefined,
+        employerName: employerName ?? undefined,
+      },
       { onSuccess: invalidateStatus }
     );
 

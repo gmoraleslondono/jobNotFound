@@ -8,3 +8,10 @@ export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString("sv-SE");
 };
+
+/** ISO timestamp from DB when the application row was created (optional for legacy data). */
+export const formatAppliedAt = (iso: string): string => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("sv-SE");
+};

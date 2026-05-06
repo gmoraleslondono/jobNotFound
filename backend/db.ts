@@ -13,9 +13,17 @@ const dbFilePath = join(
 
 type JobStatus = z.infer<typeof jobStatusSchema>;
 
+type AppliedJobRecord = {
+  id: string;
+  status: JobStatus;
+  headline?: string | null;
+  employerName?: string | null;
+  createdAt?: string | null;
+};
+
 type Data = {
   favorites: { id: string }[];
-  appliedJobs: { id: string; status: JobStatus }[];
+  appliedJobs: AppliedJobRecord[];
 };
 
 const db = new Low<Data>(new JSONFile(dbFilePath), {

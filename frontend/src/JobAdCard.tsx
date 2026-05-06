@@ -1,4 +1,4 @@
-import { formatDate } from "./dateUtils";
+import { formatAppliedAt, formatDate } from "./dateUtils";
 import { ActionButtons } from "./ActionButtons";
 import { JobAdHeader } from "./JobAdHeader";
 import "./JobAdCard.css";
@@ -14,11 +14,17 @@ type JobAdCardProps = {
     application_deadline?: string | null;
     status?: string | null;
   };
+  createdAt?: string | null;
   onToggleFavorite: (job: { id: string; isFavorite: boolean }) => void;
 };
 
-export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {
+export const JobAdCard = ({
+  job,
+  createdAt,
+  onToggleFavorite,
+}: JobAdCardProps) => {
   const isFavorite = Boolean(job.isFavorite);
+  const appliedOnLabel = createdAt && formatAppliedAt(createdAt);
 
   return (
     <li className="job-card">
@@ -39,9 +45,16 @@ export const JobAdCard = ({ job, onToggleFavorite }: JobAdCardProps) => {
           <p className="card-info">
             Last application date: {formatDate(job.application_deadline || "")}
           </p>
+          {appliedOnLabel ? (
+            <p className="card-info">Marked applied on: {appliedOnLabel}</p>
+          ) : null}
         </div>
         <div className="card-actions">
-          <ActionButtons jobId={job.id || ""} />
+          <ActionButtons
+            jobId={job.id || ""}
+            headline={job.headline}
+            employerName={job.employer?.name}
+          />
         </div>
       </div>
     </li>

@@ -122,16 +122,31 @@ export const appRouter = router({
       z.object({
         id: z.string(),
         status: jobStatusSchema,
+        headline: z.string().nullable().optional(),
+        employerName: z.string().nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {
       try {
         await db.read();
         const existing = db.data?.appliedJobs?.find((j) => j.id === input.id);
+        const headline =
+          input.headline?.trim() ? input.headline.trim() : undefined;
+        const employerName =
+          input.employerName?.trim() ? input.employerName.trim() : undefined;
+
         if (existing) {
           existing.status = input.status;
+          if (headline !== undefined) existing.headline = headline;
+          if (employerName !== undefined) existing.employerName = employerName;
         } else {
-          db.data.appliedJobs.push({ id: input.id, status: input.status });
+          db.data.appliedJobs.push({
+            id: input.id,
+            status: input.status,
+            createdAt: new Date().toISOString(),
+            headline: headline ?? null,
+            employerName: employerName ?? null,
+          });
         }
         await db.write();
       } catch {

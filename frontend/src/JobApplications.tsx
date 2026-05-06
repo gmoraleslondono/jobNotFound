@@ -1,9 +1,26 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatAppliedAt } from "./dateUtils";
 import { useTRPC } from "./trpc";
 import { JobAdCard } from "./JobAdCard";
 import { JOBS_QUERY_PREFIX, useToggleFavorite } from "./useToggleFavorite";
 import "./JobAdCard.css";
 import "./ActionButtons.css";
+
+function storedHeadlineLabel(headline?: string | null) {
+  const t = headline?.trim();
+  return t ? t : "Title not saved";
+}
+
+function storedCompanyLabel(employerName?: string | null) {
+  const t = employerName?.trim();
+  return t ? t : "Company not saved";
+}
+
+function storedAppliedOnLabel(createdAt?: string | null) {
+  if (!createdAt?.trim()) return "Not recorded";
+  const formatted = formatAppliedAt(createdAt);
+  return formatted || "Not recorded";
+}
 
 export const JobApplications = () => {
   const trpc = useTRPC();
@@ -69,6 +86,7 @@ export const JobApplications = () => {
                 <JobAdCard
                   key={application.id}
                   job={job}
+                  createdAt={application.createdAt}
                   onToggleFavorite={handleToggleFavorite}
                 />
               );
@@ -80,6 +98,16 @@ export const JobApplications = () => {
                   <p className="card-info">
                     This job listing is no longer available. It may have been
                     removed or expired.
+                  </p>
+                  <p className="card-info favorite-unavailable-headline">
+                    {storedHeadlineLabel(application.headline)}
+                  </p>
+                  <p className="card-info">
+                    Company: {storedCompanyLabel(application.employerName)}
+                  </p>
+                  <p className="card-info">
+                    Marked applied on:{" "}
+                    {storedAppliedOnLabel(application.createdAt)}
                   </p>
                   <p className="card-info favorite-unavailable-id">
                     Saved job ID: {application.id}

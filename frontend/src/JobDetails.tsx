@@ -56,7 +56,11 @@ export const JobDetails = () => {
         </div>
       </div>
       <div className="action-container">
-        <ActionButtons jobId={jobId || ""} />
+        <ActionButtons
+          jobId={jobId || ""}
+          headline={jobAd?.headline}
+          employerName={jobAd?.employer?.name}
+        />
       </div>
     </div>
   );
