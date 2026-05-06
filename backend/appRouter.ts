@@ -139,6 +139,21 @@ export const appRouter = router({
       }
     }),
 
+  removeJobApplication: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        await db.read();
+        const applied = db.data?.appliedJobs ?? [];
+        const next = applied.filter((j) => j.id !== input.id);
+
+        if (db.data) db.data.appliedJobs = next;
+        await db.write();
+      } catch {
+        // ignore
+      }
+    }),
+
   getAppliedStatusById: publicProcedure
     .input(z.string())
     .query(async ({ input: id }) => {
