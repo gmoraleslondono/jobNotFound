@@ -1,4 +1,9 @@
-import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { formatAppliedAt } from "./dateUtils";
 import { useTRPC } from "./trpc";
 import { JobAdCard } from "./JobAdCard";
@@ -93,27 +98,25 @@ export const JobApplications = () => {
             }
 
             return (
-              <li key={application.id} className="job-card favorite-unavailable">
+              <li
+                key={application.id}
+                className="job-card favorite-unavailable"
+              >
                 <div className="favorite-unavailable-body">
                   <p className="card-info">
-                    This job listing is no longer available. It may have been
-                    removed or expired.
+                    This job listing {application.id} is no longer available. It
+                    may have been removed or expired.
                   </p>
                   <p className="card-info favorite-unavailable-headline">
+                    {storedCompanyLabel(application.employerName)} -{" "}
                     {storedHeadlineLabel(application.headline)}
                   </p>
                   <p className="card-info">
-                    Company: {storedCompanyLabel(application.employerName)}
+                    Last tracked status: {application.status}
                   </p>
                   <p className="card-info">
                     Marked applied on:{" "}
                     {storedAppliedOnLabel(application.createdAt)}
-                  </p>
-                  <p className="card-info favorite-unavailable-id">
-                    Saved job ID: {application.id}
-                  </p>
-                  <p className="card-info">
-                    Last tracked status: {application.status}
                   </p>
                   <button
                     type="button"
