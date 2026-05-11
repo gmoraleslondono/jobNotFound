@@ -1,0 +1,21 @@
+.job-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.job-filter-button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--text-primary);
+  background: var(--bg);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+}
+
+.job-filter-button--active {
+  background: var(--text-primary);
+  color: var(--bg);
+}

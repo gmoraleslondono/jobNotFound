@@ -4,12 +4,24 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useState } from "react";
 import { formatAppliedAt } from "./dateUtils";
 import { useTRPC } from "./trpc";
 import { JobAdCard } from "./JobAdCard";
 import { JOBS_QUERY_PREFIX, useToggleFavorite } from "./useToggleFavorite";
 import "./JobAdCard.css";
 import "./ActionButtons.css";
+import "./JobApplications.css";
+
+const STATUS_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "applied", label: "Applied" },
+  { id: "interviewing", label: "Interviewing" },
+  { id: "hired", label: "Hired" },
+  { id: "declined", label: "Declined" },
+] as const;
+
+type StatusFilterId = (typeof STATUS_FILTERS)[number]["id"];
 
 function storedHeadlineLabel(headline?: string | null) {
   const t = headline?.trim();
@@ -31,6 +43,8 @@ export const JobApplications = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { handleToggleFavorite } = useToggleFavorite();
+  const [statusFilterId, setStatusFilterId] =
+    useState<StatusFilterId>("all");
   const {
     data: applications,
     isLoading: isApplicationsLoading,
@@ -38,6 +52,10 @@ export const JobApplications = () => {
   } = useQuery(trpc.getJobApplications.queryOptions());
 
   const applicationsList = applications ?? [];
+  const filteredApplicationsList =
+    statusFilterId === "all"
+      ? applicationsList
+      : applicationsList.filter((a) => a.status === statusFilterId);
 
   const removeJobApplication = useMutation(
     trpc.removeJobApplication.mutationOptions({
@@ -55,9 +73,9 @@ export const JobApplications = () => {
   );
 
   const applicationJobQueries = useQueries({
-    queries: applicationsList.map((application) => ({
+    queries: filteredApplicationsList.map((application) => ({
       ...trpc.getJob.queryOptions(application.id),
-      enabled: applicationsList.length > 0,
+      enabled: filteredApplicationsList.length > 0,
       retry: false,
     })),
   });
@@ -81,8 +99,32 @@ export const JobApplications = () => {
   return (
     <div className="job-applications">
       <div className="jobApplications-list">
+        <div
+          className="job-filter-bar"
+          role="group"
+          aria-label="Application status filter"
+        >
+          {STATUS_FILTERS.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              className={
+                f.id === statusFilterId
+                  ? "job-filter-button job-filter-button--active"
+                  : "job-filter-button"
+              }
+              aria-pressed={f.id === statusFilterId}
+              onClick={() => setStatusFilterId(f.id)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        {filteredApplicationsList.length === 0 ? (
+          <div className="text">No applications match this filter.</div>
+        ) : null}
         <ul>
-          {applicationsList.map((application, index) => {
+          {filteredApplicationsList.map((application, index) => {
             const query = applicationJobQueries[index];
             const job = query?.data;
 
