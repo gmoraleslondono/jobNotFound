@@ -17,51 +17,62 @@ export const JobDetails = () => {
 
   return (
     <div className="job-details">
-      <div className="content">
+      {!jobAd && (
         <div>
-          <JobAdHeader
-            jobId={jobAd?.id ?? jobId ?? ""}
-            headline={jobAd?.headline}
-            status={jobAd?.status}
-            isFavorite={Boolean(jobAd?.isFavorite)}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          <h2>Job not found.</h2>
+          <p> Probably the job ad was removed or expired.</p>
+          <p>Please check the job ID and try again.</p>
         </div>
-        <div className="info">
-          <p className="relevant-info">Company: {jobAd?.employer?.name}</p>
-          <p className="relevant-info">
-            Type of contract: {jobAd?.duration?.label} -{" "}
-            {jobAd?.working_hours_type?.label}
-          </p>
-          <p className="relevant-info">
-            Last application date:{" "}
-            {formatDate(jobAd?.application_deadline || "")}
-          </p>
-        </div>
-        <p className="description">{jobAd?.description?.text}</p>
-        <div className="apply-link-container">
-          {jobAd?.application_details?.url && (
-            <>
-              <p>Apply here:</p>
-              <a
-                className="apply-link"
-                href={jobAd?.application_details?.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {jobAd?.application_details?.url}
-              </a>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="action-container">
-        <ActionButtons
-          jobId={jobId || ""}
-          headline={jobAd?.headline}
-          employerName={jobAd?.employer?.name}
-        />
-      </div>
+      )}
+      {jobAd && (
+        <>
+          <div className="content">
+            <div>
+              <JobAdHeader
+                jobId={jobAd?.id ?? jobId ?? ""}
+                headline={jobAd?.headline}
+                status={jobAd?.status}
+                isFavorite={Boolean(jobAd?.isFavorite)}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            </div>
+            <div className="info">
+              <p className="relevant-info">Company: {jobAd?.employer?.name}</p>
+              <p className="relevant-info">
+                Type of contract: {jobAd?.duration?.label} -{" "}
+                {jobAd?.working_hours_type?.label}
+              </p>
+              <p className="relevant-info">
+                Last application date:{" "}
+                {formatDate(jobAd?.application_deadline || "")}
+              </p>
+            </div>
+            <p className="description">{jobAd?.description?.text}</p>
+            <div className="apply-link-container">
+              {jobAd?.application_details?.url && (
+                <>
+                  <p>Apply here:</p>
+                  <a
+                    className="apply-link"
+                    href={jobAd?.application_details?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {jobAd?.application_details?.url}
+                  </a>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="action-container">
+            <ActionButtons
+              jobId={jobId || ""}
+              headline={jobAd?.headline}
+              employerName={jobAd?.employer?.name}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
